@@ -53,6 +53,7 @@
     <Compile Include="ConfGraphs.fs" />
     <Compile Include="StdScp.fs" />
     <Compile Include="MultiDrive.fs" />
+    <Compile Include="MRScp.fs" />
     <Compile Include="ExtExp.fs" />
     <Compile Include="Residualize.fs" />
     <Compile Include="Parsec.fs" />
