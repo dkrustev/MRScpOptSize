@@ -6,9 +6,20 @@ type FunName = string
 
 type AppKind = AKCon of ConName | AKFun of FunName
 
+[<StructuredFormatDisplay("{PrettyPrint}")>]
 type Exp = 
     | EVar of VarName
     | EApp of AppKind * list<Exp>
+    member this.PrettyPrint : string =
+        let appName ak = 
+            match ak with
+            | AKCon c -> c
+            | AKFun f -> f
+        let rec ppExp offset e =
+            match e with
+            | EVar x -> x
+            | EApp(ak, es) -> sprintf "%s(%s)" (appName ak) (es |> Seq.map (ppExp offset) |> String.concat ", ")
+        ppExp "" this
 
 let rec expVars e =
     match e with
@@ -154,9 +165,18 @@ type Pattern = ConName * list<VarName>
 
 type Case = Pattern * list<VarName> * Exp
 
+[<StructuredFormatDisplay("{PrettyPrint}")>]
 type Def =
     | FDef of FunName * list<VarName> * Exp
     | GDef of FunName * list<Case>
+    member this.PrettyPrint : string =
+        match this with
+        | FDef(f, xs, e) -> sprintf "%s(%s) = %A;\n" f (xs |> String.concat ", ") e
+        | GDef(f, alts) ->
+            alts
+            |> Seq.map (fun ((c, xs), ys, e) -> 
+                sprintf "%s(%s(%s), %s) = %A;\n" f c (String.concat ", " xs) (String.concat ", " ys) e)
+            |> String.concat ""
 
 type Defs = list<Def>
 
