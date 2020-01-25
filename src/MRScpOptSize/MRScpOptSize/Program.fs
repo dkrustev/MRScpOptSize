@@ -12,5 +12,5 @@ let main argv =
     //let gs = MRScp.mrScp (ExpParser.str2defs "f(x,y)=Pair(x,y);") (ExpParser.str2exp "f(A,B)")
     //Examples.mrScp Examples.appDef Examples.appAppExample
     //Examples.mrScp Examples.kmpDef Examples.kmpExample
-    Examples.mrScp Examples.kmpDef Examples.boolEqSymExample
+    Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "boolEqSym" Examples.kmpDef Examples.boolEqSymExample
     0 // return an integer exit code
