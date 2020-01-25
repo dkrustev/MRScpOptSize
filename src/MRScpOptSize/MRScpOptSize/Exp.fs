@@ -319,7 +319,7 @@ module CSE =
         | None -> prog
         | Some mFuns ->
             let (keep, del, ren) = splitRepeatedFuns mFuns
-            eprintfn "split %A into %A and %A and %A" mFuns keep del ren
+            //eprintfn "split %A into %A and %A and %A" mFuns keep del ren
             let newDefs =
                 []
                 |> List.foldBack (fun def defs ->
