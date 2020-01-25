@@ -9,10 +9,6 @@ let main argv =
     printfn "%A" paa
     printfn "%A" eaa
     *)
-    let gs = MRScp.mrScp (ExpParser.str2defs "f(x,y)=Pair(x,y);") (ExpParser.str2exp "f(A,B)")
-    printfn "%A" gs
-    let cgs = MRScp.gset2graphs gs
-    for (c, g) in cgs do
-        printfn "%A" c
-        printfn "%A" g
+    //let gs = MRScp.mrScp (ExpParser.str2defs "f(x,y)=Pair(x,y);") (ExpParser.str2exp "f(A,B)")
+    Examples.mrScp Examples.appDef Examples.appAppExample
     0 // return an integer exit code
