@@ -72,3 +72,14 @@ let kmpDef = str2defs kmpDefStr
 let kmpExample = ExpParser.str2exp "isSublist(Cons(True, Cons(True, Cons(False, Nil))), s)"
 
 let boolEqSymExample = ExpParser.str2exp "eqBool(eqBool(x, y), eqBool(y, x))"
+
+// example 11.4.1 of Soerensen's thesis
+let expGrowthDefStr = """
+g(Nil,         y) = y;
+g(Cons(x, xs), y) = f(g(xs, y));
+f(w) = B(w, w);
+"""
+let expGrowthDef = ExpParser.str2defs expGrowthDefStr
+let expGrowthExample = ExpParser.str2exp "g(Cons(A, Cons(A, Cons(A, Nil))), z)"
+
+
