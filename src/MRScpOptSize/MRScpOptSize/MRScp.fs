@@ -68,3 +68,74 @@ let rec private mrScpRec (defs: Defs) (nestLvl: int) (hist: list<HistEntryKind *
 
 let mrScp (defs: Defs) (e: Exp) : GraphSet =
     mrScpRec defs 0 [] (MDSRUnfold e, e)
+
+module GraphSetOps =
+
+    let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet =
+        let selectMinMax (kx: int * 'A) (ky: int * 'A) : int * 'A =
+            match kx, ky with
+            | (-1, _), _ -> ky
+            | _, (-1, _) -> kx
+            | (k1, x), (k2, y) -> if cmp k1 k2 then kx else ky
+        let minMaxSizeGraphs (gs: list<GraphSet>) : int * list<GraphSet> =
+            (0, []) |> List.foldBack (fun g kgs -> 
+                match minMaxSizeGraph cmp g, kgs with
+                | (-1, g), (_, gs) -> (-1, g::gs)
+                | (_, g), (-1, gs) -> (-1, g::gs)
+                | (i, g), (j, gs) -> (i + j, g::gs)
+                ) gs
+        let minMaxSizeGraphss (gss: list<list<GraphSet>>) : int * list<GraphSet> =
+            gss |> List.fold (fun kgs gs -> selectMinMax kgs (minMaxSizeGraphs gs)) (-1, [])
+        match g with
+        | GSNone -> (-1, GSNone)
+        | GSFold _ -> (1, g)
+        | GSBuild(c, gss) -> 
+            match minMaxSizeGraphss gss with
+            | -1, _ -> (-1, GSNone)
+            | k, gs -> (1 + k, GSBuild(c, [gs]))
+
+    let rec firstGraph (g: GraphSet) : GraphSet =
+        let firstGraphs (gs: list<GraphSet>) : option<list<GraphSet>> =
+            Some [] |> List.foldBack (fun g ogs -> 
+                match firstGraph g, ogs with
+                | GSNone, _ -> None
+                | _, None -> None
+                | g, Some gs -> Some (g::gs)
+                ) gs
+        let rec firstGraphss (gss: list<list<GraphSet>>) : option<list<GraphSet>> =
+            match gss with
+            | [] -> None
+            | gs::gss -> 
+                match firstGraphs gs with
+                | Some gs -> Some gs
+                | None -> firstGraphss gss
+        match g with
+        | GSNone -> GSNone
+        | GSFold _ -> g
+        | GSBuild(c, gss) -> 
+            match firstGraphss gss with
+            | None -> GSNone
+            | Some gs -> GSBuild(c, [gs])
+
+    let rec lastGraph (g: GraphSet) : GraphSet =
+        let lastGraphs (gs: list<GraphSet>) : option<list<GraphSet>> =
+            Some [] |> List.foldBack (fun g ogs -> 
+                match lastGraph g, ogs with
+                | GSNone, _ -> None
+                | _, None -> None
+                | g, Some gs -> Some (g::gs)
+                ) gs
+        let rec lastGraphss (gss: list<list<GraphSet>>) : option<list<GraphSet>> =
+            match gss with
+            | [] -> None
+            | gs::gss -> 
+                match lastGraphs gs with
+                | Some gs -> Some gs
+                | None -> lastGraphss gss
+        match g with
+        | GSNone -> GSNone
+        | GSFold _ -> g
+        | GSBuild(c, gss) -> 
+            match lastGraphss (List.rev gss) with
+            | None -> GSNone
+            | Some gs -> GSBuild(c, [gs])
