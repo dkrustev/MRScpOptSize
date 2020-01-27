@@ -214,6 +214,101 @@ invited to compare them to the simplicity of this MRSC approach.
 
 \section{Generalization Approach}\label{sec:Generalize}
 
+\subsection{Programming Language}
+
+The object language we consider is a first-order functional language with ordinary and 
+pattern-matching function definitions.
+Its syntax is summarized in Fig. \ref{fig:SLLsyntax}.
+A very similar language is often used in many introductions to positive
+supecompilation \cite{PosScp,KlyuchnikovTMR}.
+A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
+We assume the language has a call-by-name semantics, as this case is easiest to supercompile,
+but we skip a more detailed presentation of the semantics of the language, assuming it mostly obvious.
+
+\begin{figure}
+\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+$e$ & ::= && expression   \\
+    && $x$ & variable     \\
+    && $a(e_1,\ldots,e_n)$ & call \\
+$a$ & ::= && call kind    \\
+    && $C$ & constructor  \\
+    && $f$ & function     \\
+$p$ & ::= & $C(x_1, $\ldots$, x_n)$ & pattern \\
+$d$ & ::= && function definition \\
+    &         & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
+    & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching function \\
+    &         & $\ldots$ & \\
+    &         & $g(p_n, y_1, \ldots, y_m) = e_n$ & \\
+$P$ & ::= & $d_1, \ldots, d_n$ & program
+\end{tabular}
+\caption{Object Language Syntax}
+\label{fig:SLLsyntax}
+\end{figure}
+
+\subsection{Driving}
+
+Let us recall how driving looks like for this simple language, in the case of standard (positive) supercompilation.
+As a technical device, we define a single step of driving, producing a
+result of type \verb|DriveStepResult|, as defined in Fig. \ref{fig:DriveStepResult}
+
+\begin{figure}
+\begin{lstlisting}
+type DriveStepResult =
+  | DSRNone
+  | DSRCon of ConName * list<Exp>
+  | DSRUnfold of Exp
+  | DSRCases of VarName * list<Pattern * Exp>
+\end{lstlisting}
+\caption{Result of a Single Step of Driving}
+\label{fig:DriveStepResult}
+\end{figure}
+
+\begin{itemize}
+  \item We cannot drive a variable any further: $\mathtt{drive} \llbracket x \rrbracket = \mathtt{DSNone}$;
+  \item Driving a constructor results in a constructor node with all arguments available for
+    further driving: $\mathtt{drive} \llbracket C(e_1, \ldots, e_n) \rrbracket = \mathtt{DSCon}(C, e_1, \ldots, e_n)$;
+  \item If we stumble upon a call to an ordinary function, we simply unfold its definition:
+    $\mathtt{drive} \llbracket f(e_1, \ldots, e_n) \rrbracket = \mathtt{DSUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])$,
+    where $f(x_1, \ldots, x_n) = e \in P$ and $ [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
+    denotes simultaneous substitution;
+  \item The most intersting cases concern a call to a pattern-matching function, as the situation is
+    differnt depending on the kind of the first argument:
+    \begin{itemize}
+      \item $\mathtt{drive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
+        $\mathtt{DSUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
+        where $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
+      \item $\mathtt{drive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
+        $\mathtt{DSCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
+          $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))$
+        where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$
+        and $\mathtt{propagate}$ performs positive information propagation by substituting (a suitable renaming of) $p_i$ for $x$ 
+        in the corresponding branch $i$;
+      \item $\mathtt{drive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
+        $\mathtt{dsrMap}(\llbracket g(\bullet, e_1, \ldots, e_n) \rrbracket, \mathtt{drive} \llbracket f(e'_1, \ldots, e'_m) \rrbracket)$
+        where $\mathtt{dsrMap}$ transforms a driving step result by splicing it in an expression with a hole.
+    \end{itemize}
+\end{itemize}
+We deliberately omit many low-level details in this description, as they are well-known and can be found
+in most introductions to positive supercompilation \cite{PosScp,KlyuchnikovTMR}.
+Using this definition of driving, plus the usual definitions of folding, whistle, and generalization, 
+we can build configuration graphs of the form shown in Fig. \ref{fig:ConfGraph}.
+
+\begin{figure}
+\begin{lstlisting}
+type ConfGraph =
+  | CGLeaf of Exp
+  | CGCon of ConName * list<ConfGraph>
+  | CGUnfold of ConfGraph
+  | CGCases of VarName * list<Pattern * ConfGraph>
+  | CGFold of int * list<VarName * VarName>
+  | CGLet of list<VarName * ConfGraph> * ConfGraph
+\end{lstlisting}
+\caption{Representation of a Configuration Graph}
+\label{fig:ConfGraph}
+\end{figure}
+
+
+
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
 \section{Future Work}
