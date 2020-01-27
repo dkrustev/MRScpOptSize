@@ -307,6 +307,93 @@ type ConfGraph =
 \label{fig:ConfGraph}
 \end{figure}
 
+\subsection{Multi-result Driving And Generaliztion}
+
+As already mentioned, a key difference in multi-result supercompilation is
+that driving and generalization are grouped together: a \emph{multi-driving}
+step can return not one, but several alternative configurations.
+One of them is typically the result of standard driving, but the others
+can be different kinds of generalizations.
+The choice of generalization strategy depends on the intended use of the
+multi-result supercompiler.
+In our case, the main goal is to find a program of optimal size among the results.
+Previous analyzes have shown that one of the main reasons for code size expolosion in
+supercompilation is the unrestricted duplication of sub-expressions during driving.
+Of course, sometimes such duplication pays off, as it leads to new opportunieties 
+for optimization.
+But this is not always the case.
+These observations hint us to consider two guidning principles that should helps us attain this goal:
+\begin{itemize}
+  \item if standard driving can produce code duplication, provide also a generalized
+    configuration, where no (non-trivial) sub-expressions are duplicated;
+  \item if there is no risk of code duplication, avoid any generalization, as it will
+    be unlikely to help with the size of the result.
+\end{itemize}
+To apply these principles, we analyze standard driving, case by case, to see where
+we need to avoid code duplication by generalization.
+In order to express generalization as a possible result of a driving step,
+we extend our representation of a step result - Fig. \ref{fig:MultiDriveStepResult}.
+The same figure shows the implementation of \verb|mdsrSubExps| that we have encountered earlier.
+
+\begin{figure}
+\begin{lstlisting}
+type MultiDriveStepResult =
+  | MDSRLeaf of Exp
+  | MDSRCon of ConName * list<Exp>
+  | MDSRUnfold of Exp
+  | MDSRCases of VarName * list<Pattern * Exp>
+  | MDSRLet of list<VarName * Exp> * Exp
+
+let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
+  match mdsr with
+  | MDSRLeaf _ -> []
+  | MDSRCon(_, es) -> es
+  | MDSRUnfold e -> [e]
+  | MDSRCases(_, cases) -> List.map snd cases
+  | MDSRLet(binds, e) -> e :: List.map snd binds
+\end{lstlisting}
+\caption{One Step of Multi-result Driving}
+\label{fig:MultiDriveStepResult}
+\end{figure}
+
+\begin{itemize}
+  \item The variable case is again trivial: $\mathtt{mrdrive} \llbracket x \rrbracket = [\mathtt{MDSRLeaf}(x)]$;
+    (We use $[\ldots; \ldots; \ldots]$ to denote lists of results.)
+  \item There is no code duplication when driving a constructor, so we again make no generalization: 
+    $\mathtt{mrdrive} \llbracket C(e_1, \ldots, e_n) \rrbracket = [\mathtt{MDSRCon}(C, e_1, \ldots, e_n)]$;
+  \item The unfolding of a call to an ordinary function can produce code duplication, if some arguments appear
+    multiple times in the body of the definition. 
+    We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work}:
+    $\mathtt{mrdrive} \llbracket f(e_1, \ldots, e_n) \rrbracket =$ 
+      $[\mathtt{MDSRLet}(y_1=e_1, \ldots, y_n=e_n, e [ x_1\rightarrow y_1, \ldots, x_n\rightarrow y_n ]); $
+      $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])]$,
+    where $y_1, \ldots, y_n$ are fresh and $f(x_1, \ldots, x_n) = e \in P$.
+    Notice that we shall always place the generalization result before the driving result in the list.
+    In this way, supercompiled programs produced earlier will have more generalizations;
+  \item The case of a pattern-matching call with a known constructor is completely
+    analogous to the previous one:
+    $\mathtt{mrdrive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket = [$
+    $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$
+    $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])]$
+    where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
+  \item When we pattern-match on a variable, there can be some code duplication during
+    information propagation. 
+    The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
+    We have currently decided to accept this limited form ot potential duplication, without adding a generalization:
+    $\mathtt{mrdrive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
+    $[\mathtt{MDSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
+    $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))]$
+    where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$;
+    
+  \item The case of matching on a function call is perhaps the least obvious. 
+    As during normal driving we reuse the result of driving the nested call, it is not statically clear what
+    it will be.
+    So we prefer to be conservative, and add a full generalization of the outer call here:
+    $\mathtt{mrdrive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
+    $[\mathtt{MDSRLet}(x_0=f(e'_1, \ldots, e'_m), x_1=e_1, \ldots, x_n=e_n, g(x_0, \ldots, x_n));$ \\
+    $\mathtt{mdsrMap}(\llbracket g(\bullet, e_1, \ldots, e_n) \rrbracket, \mathtt{mrdrive} \llbracket f(e'_1, \ldots, e'_m) \rrbracket)]$
+    where $x_0, \ldots, x_n$ are, as usual, fresh.
+\end{itemize}
 
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
