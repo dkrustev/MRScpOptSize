@@ -526,6 +526,21 @@ g(Cons(A, Cons(A, Cons(A, Nil))), z)
 \end{figure*}
 
 The example programs and expressions are shown in Fig. \ref{fig:Examples}.
+\begin{itemize}
+  \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
+    demonstrate the power of deforestation and supercompilation.
+    In a way, it can also be seen as a proof that list append is associative.
+  \item The ``KMP test'' (Fig. \ref{sfig:SubstrPrg}-\subref{sfig:KMP}) is another classical example, 
+    which demonstrates the power of supercompilation with respect to deforestation and partial evaluation.
+    It involves specializing a sub-list predicate to a fixed sub-list being
+    searched in an unknown list.
+  \item ``\verb|eqBool| symmetry'' (Fig. \ref{sfig:SubstrPrg}, \ref{sfig:BoolEqSym}) is intended
+    to show that Boolean equality is symmetric.
+  \item ``exp growth'' (Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth}) is an example taken 
+    from S{\o}rensen's thesis \cite[Example 11.4.1]{SorensenThesis}, who attributes it to Sestoft.
+    It is aimed to demonstrate how classical supercompilation can produce output programs
+    growing exponentially with respect to the input.
+\end{itemize}
 
 \section{Future Work}
 
