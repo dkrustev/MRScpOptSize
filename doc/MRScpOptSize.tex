@@ -7,14 +7,15 @@
 \lstset{
   language=Caml,
   defaultdialect=[Objective]Caml,
-  basicstyle=\scriptsize,
+  basicstyle=\footnotesize,
   frame=tb
-  %	basicstyle=\small\ttfamily,
+  % basicstyle=\small\ttfamily,
   %	commentstyle=\textit,
   %	keywordstyle=\bfseries
 }
 
 \usepackage{stmaryrd} % for \{ll,rr}bracket	
+\usepackage{caption,subcaption}
 
 \title{Optimizing Program Size Using Multi-result Supercompilation}
 \author{Dimitur Nikolaev Krustev
@@ -422,6 +423,110 @@ GSBuild
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
+We have studied the behaviour of the proposed multi-result supercompiler on a few simple
+examples, with a focus on the resulting program size.
+A streightforward approach, which works for some of the smaller examples,
+is to enumerate all resulting configuration graphs and gather statistics from them.
+For one example -- the well-known ``KMP test'' -- this approach turned out to be too
+time consuming.
+So, to make possible to analyze larger examples, we adapted the approach 
+of Grechanik et al. \cite{Romanenko2014StagedMRSC}, which permits to filter
+the sequence of configuration graphs produced by MRSC, without explicitly
+enumerating them.
+In particular, we have implemented functions to extract:
+\begin{itemize}
+  \item the first configuration graph in the sequence (recall that by the ordering of 
+    results during driving, it should contain the most generalizations);
+  \item the last one -- with the least number of generalizations;
+  \item the smallest graph;
+  \item the largest graph.
+\end{itemize}
+The implementation of the last 2 functions is provided in Appendix \ref{app:FilterGraphSet},
+the other 2 are similar.
+
+\begin{figure*}
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Prolog]
+append(Nil, ys) = ys;
+append(Cons(x, xs), ys) = Cons(x, append(xs, ys));
+\end{lstlisting}
+\caption{List Append Program}
+\label{sfig:AppPrg}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+append(append(xs, ys), zs)
+\end{lstlisting}
+\caption{Double Append}
+\label{sfig:DoubleApp}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+not(True)  = False;
+not(False) = True;
+
+eqBool(True,  b) = b;
+eqBool(False, b) = not(b);
+
+match(Nil,         ss, op, os) = True;
+match(Cons(p, pp), ss, op, os) = matchCons(ss, p, pp, op, os);
+
+matchCons(Nil,         p, pp, op, os) = False;
+matchCons(Cons(s, ss), p, pp, op, os) = matchHdEq(eqBool(p, s), pp, ss, op, os);
+
+matchHdEq(True,  pp, ss, op, os) = match(pp, ss, op, os);
+matchHdEq(False, pp, ss, op, os) = next(os, op);
+
+next(Nil,         op) = False;
+next(Cons(s, ss), op) = match(op, ss, op, ss);
+
+isSublist(p, s) = match(p, s, p, s);
+\end{lstlisting}
+\caption{Substring Program}
+\label{sfig:SubstrPrg}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+isSublist(Cons(True, Cons(True, Cons(False, Nil))), s)
+\end{lstlisting}
+\caption{``KMP Test''}
+\label{sfig:KMP}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+eqBool(eqBool(x, y), eqBool(y, x))
+\end{lstlisting}
+\caption{Bool Equality Symmetry}
+\label{sfig:BoolEqSym}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+g(Nil,         y) = y;
+g(Cons(x, xs), y) = f(g(xs, y));
+f(w) = B(w, w);
+\end{lstlisting}
+\caption{Program Demonstrating Exponential Growth}
+\label{sfig:ExpGrowthPrg}
+\end{subfigure}
+
+\begin{subfigure}[b]{\linewidth}
+\begin{lstlisting}[language=Lisp,keywords={}]
+g(Cons(A, Cons(A, Cons(A, Nil))), z)
+\end{lstlisting}
+\caption{Expression Demonstrating Exponential Growth}
+\label{sfig:ExpGrowth}
+\end{subfigure}
+
+\caption{Example Programs}\label{fig:Examples}
+\end{figure*}
+
+The example programs and expressions are shown in Fig. \ref{fig:Examples}.
+
 \section{Future Work}
 
 \section{Related Work}
@@ -431,5 +536,37 @@ GSBuild
 %\nocite{*}
 \bibliographystyle{eptcs}
 \bibliography{MRScpOptSize}
+
+\appendix
+
+\section{Selecting Graphs from a $\mathtt{GraphSet}$}\label{app:FilterGraphSet}
+
+\begin{figure}
+\begin{lstlisting}
+let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet =
+  let selectMinMax (kx: int * 'A) (ky: int * 'A) : int * 'A =
+    match kx, ky with
+    | (-1, _), _ -> ky
+    | _, (-1, _) -> kx
+    | (k1, x), (k2, y) -> if cmp k1 k2 then kx else ky
+  let minMaxSizeGraphs (gs: list<GraphSet>) : int * list<GraphSet> =
+    (0, []) |> List.foldBack (fun g kgs -> 
+      match minMaxSizeGraph cmp g, kgs with
+      | (-1, g), (_, gs) -> (-1, g::gs)
+      | (_, g), (-1, gs) -> (-1, g::gs)
+      | (i, g), (j, gs) -> (i + j, g::gs)
+      ) gs
+  let minMaxSizeGraphss (gss: list<list<GraphSet>>) : int * list<GraphSet> =
+    gss |> List.fold (fun kgs gs -> selectMinMax kgs (minMaxSizeGraphs gs)) (-1, [])
+  match g with
+  | GSNone -> (-1, GSNone)
+  | GSFold _ -> (1, g)
+  | GSBuild(c, gss) -> 
+    match minMaxSizeGraphss gss with
+    | -1, _ -> (-1, GSNone)
+    | k, gs -> (1 + k, GSBuild(c, [gs]))
+\end{lstlisting}
+\caption{Selecting a Graph of Minimum/Maximum Size from a Graph Set}
+\end{figure}
 
 \end{document}
