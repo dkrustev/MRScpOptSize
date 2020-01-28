@@ -542,6 +542,23 @@ The example programs and expressions are shown in Fig. \ref{fig:Examples}.
     growing exponentially with respect to the input.
 \end{itemize}
 
+The results of the multi-result supercompilation -- using our specific generalization approach --
+are summarized in Table \ref{tbl:Stats}.
+We give the configuration graph sizes for each of the four types of results (first, last, minimum/maximum size).
+
+\begin{table}
+  \centering
+  \caption{MRSC Statistics}\label{tbl:Stats}
+  \begin{tabular}{l|r|r|r|r}
+    \hline
+    Example                 & First & Last & Min. size & Max.size \\ \hline
+    double append           &    12 &   10 &        10 &       19 \\
+    KMP test                &   203 &   39 &        38 &     1055 \\
+    \verb|eqBool| symmetry  &    16 &   17 &        16 &       30 \\
+    exp growth              &    15 &   37 &        15 &       57 \\
+  \end{tabular}
+\end{table}
+
 \section{Future Work}
 
 \section{Related Work}
