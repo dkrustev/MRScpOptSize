@@ -18,7 +18,11 @@ let mrScp defs e =
         printfn "%A" g
         printfn "%A" (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
 
-let mrScpDump path name defs e =
+let mrScpDump dumpAllGraphs path name defs e =
+    let path = System.IO.Path.Combine(path, name)
+    if not (System.IO.Directory.Exists(path)) then
+        System.IO.Directory.CreateDirectory(path) |> ignore
+
     let dumpSelected name1 s gs =
         let gs' = MRScp.gset2graphs gs
         assert (Seq.length gs' = 1)
@@ -38,26 +42,25 @@ let mrScpDump path name defs e =
     dumpSelected "First" "" gsFirst
     let gsLast = MRScp.GraphSetOps.lastGraph gs
     dumpSelected "Last" "" gsLast
-(*
-    let cgs = MRScp.gset2graphs gs
-    let mutable count = 0
-    let mutable minSize = System.Int32.MaxValue
-    let mutable maxSize = 0
-    let mutable totalSize = 0
-    for (i, (c, g)) in cgs |> Seq.mapi (fun i x -> (i, x)) do
-        use tw = System.IO.File.CreateText(System.IO.Path.Combine(path, sprintf "%s_graph_%06i.txt" name i))
-        fprintfn tw "%A" c
-        fprintfn tw "graph size: %i" (ConfGraphs.graphSize g)
-        fprintfn tw "%A" g
-        fprintfn tw "%A" (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
-        count <- count + 1
-        let gSize = ConfGraphs.graphSize g
-        minSize <- min gSize minSize
-        maxSize <- max gSize maxSize
-        totalSize <- gSize + totalSize
-    System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_Stats.txt" name), 
-        sprintf "count: %i\nminSize: %i\nmaxSize: %i\naverageSize: %f" count minSize maxSize ((double totalSize) / (double count)))
-*)
+    if dumpAllGraphs then
+        let cgs = MRScp.gset2graphs gs
+        let mutable count = 0
+        let mutable minSize = System.Int32.MaxValue
+        let mutable maxSize = 0
+        let mutable totalSize = 0
+        for (i, (c, g)) in cgs |> Seq.mapi (fun i x -> (i, x)) do
+            use tw = System.IO.File.CreateText(System.IO.Path.Combine(path, sprintf "%s_graph_%06i.txt" name i))
+            fprintfn tw "%A" c
+            fprintfn tw "graph size: %i" (ConfGraphs.graphSize g)
+            fprintfn tw "%A" g
+            fprintfn tw "%A" (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
+            count <- count + 1
+            let gSize = ConfGraphs.graphSize g
+            minSize <- min gSize minSize
+            maxSize <- max gSize maxSize
+            totalSize <- gSize + totalSize
+        System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_Stats.txt" name), 
+            sprintf "count: %i\nminSize: %i\nmaxSize: %i\naverageSize: %f" count minSize maxSize ((double totalSize) / (double count)))
 
 let appDefStr = """
 append(Nil, ys) = ys;
