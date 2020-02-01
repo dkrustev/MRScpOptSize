@@ -675,6 +675,47 @@ expression: main_let1(main_let1(B(z, z)))
 
 \section{Related Work}
 
+The unpredictability of supercompilation with respect to both performance and
+result size is a well-established issue.
+Problems with code duplication and result size are discussed by S{\o}rensen \cite{Sorensen1994TurchinSupercompiler}, 
+for example.
+Few works directly tacle this problem, however.
+Bolingbroke et al. \cite{bolingbroke2011improving} study heuristics for improving the general
+performance of a specific supercompiler, in order to use it as an automatic phase of an optimizing 
+compiler for Haskell.
+Some of these heuristics concern avoiding code duplication, and as a consequence they may
+lead to improvements in result size.
+The key idea is to roll back -- discarding some work done by the supercompiler -- if the heuristics
+indicate that this work is not leading to a usefull result (a form of generalization).
+Speculative execution can also help with code size in some instances.
+One problem with this approach is that is not clear how to generalize it or
+apply it to a completely different supercompiler.
+The main advantage is that by carefully selecting heuristics suitable for the specific
+supercompiler, the authors report good results on a number of representative benchmarks.
+
+Jonsson et al. \cite{Jonsson2011Taming} explicitly address both the issue of code explosing and
+the related issue of supercompilation time.
+The main idea is again to discard the result of supercompiling certain program fragments
+if they do not meet certain usefullness criteria (based on the number of reductions performed 
+by the supercompiler and the resulting code size).
+We can consider again this a form of generalization.
+When such generalization happens, however, is based on specific hand-picked heuristics,
+apparently based on analyzing the results of different test runs.
+
+Grechanik et al. \cite{Romanenko2014StagedMRSC} propose a generic framework for building ``big-step''
+multi-result supercompilers, and a way to efficiently extract results satisfying certain criteria.
+Selecting the smallest result is one of the criteria studied.
+Optimization of the result size is not a goal of this work, however.
+The authors have instantiated the framework on a language simulating counter systems, which
+is not Turing-complete, and thus does not demonstrate some of the complications
+coming with Turing-complete object languages.
+This work is most closely related to ours: we re-use the same ideas for implementing
+our multi-result supercompiler, and for efficiently filtering its results by criteria.
+Our main emphasis, however, is on using MRSC together with a generalization strategy, which
+is explicitly tailored towards avoiding code duplication, and hence, optimizing result size.
+We pay much less attention to supercompilation time, as long as it is not unacceptably long
+even for the small examples we want to analyze.
+
 \section{Conclusions and Future Work}
 
 We have presented a study of the feasibility to control result size after supercompilation
