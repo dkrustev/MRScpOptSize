@@ -1,6 +1,7 @@
 ﻿module Examples
 
 open ExpParser
+open ConfGraphs
 
 let stdScp defs e =
     let g = StdScp.buildGraph defs e
@@ -29,7 +30,7 @@ let mrScpDump dumpAllGraphs path name defs e =
         let (_, g) = Seq.head gs'
         let p = (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
         System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_Graph%s.txt" name name1), 
-            sprintf "%s%A\n%A" s g p)
+            sprintf "graph size: %i\n%s%A\n%A" (graphSize g) s g p)
 
     let gs = MRScp.mrScp defs e
     System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_GraphSet.txt" name), sprintf "%A" gs)
