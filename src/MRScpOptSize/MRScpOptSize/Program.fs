@@ -4,7 +4,7 @@
 [<EntryPoint>]
 let main argv = 
     //let (paa, eaa) = Examples.appAppExample ()
-    let (paa, eaa) = Examples.kmpExample ()
+    let (paa, eaa) = Examples.boolEqSymExample ()
     printfn "%A" paa
     printfn "%A" eaa
     0 // return an integer exit code
