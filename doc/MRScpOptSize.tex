@@ -673,6 +673,38 @@ expression: main_let1(main_let1(B(z, z)))
 
 \section{Future Work}
 
+We have already hinted at some areas for potential improvements of the proposed approach:
+\begin{itemize}
+  \item study less conservative definitions of generalization; for example, avoid generalizing
+    expressions, which will not be duplicated (because the corresponding function parameter is
+    not referenced multiple times), or expressions, whose duplication is not critical;
+  \item study definitions of configuration graph size, which more closely match the expected
+    size of the residualized program, to avoid missing interesting results, as was the case
+    with ``exp growth''.
+\end{itemize}
+Clearly the first thing to do, however, is to test the proposed approach on a larger set of
+different examples.
+The current list of analyzed examples is so small, that we consider the current proposal
+rather a work in progress.
+Such an extented set of tests can give more insight on the strengths and weaknesses of the
+proposed technique, and probably suggest other ideas for further study.
+
+Provided we obtain mostly encouringing results from further testing, the next logical 
+step would be to make the approach more practical:
+\begin{itemize}
+  \item make an implementation covering a larger object language, closer to functional languages
+    in actual use;
+  \item provide a larger set of functions for quickly filtering useful results.
+\end{itemize}
+
+From a more theoretical perspective, it would be intersting to try to formulate properties
+of generalization, which can give some upper bounds on the code size of MRSC results.
+The task is not trivial, because of unfolding, which can replace the current configuration
+with a new one of unrelated size (even if we avoid code duplication at this point).
+On the other hand, at least in the case of our simple object language, we have a fixed
+list of function definitions, which can give us some bound on the configuration size
+after unfolding.
+
 \section{Related Work}
 
 \section{Conclusions}
