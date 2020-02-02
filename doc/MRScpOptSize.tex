@@ -41,7 +41,10 @@ the size of the result small, while still performing powerful optimizations.
 
 Supercompilation was invented by Turchin \cite{TurchinSupercompilerConcept} and has found numerous
 applications, such as program optimization\cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}, 
-program analysis, software testing, formal verification \cite{Klyuchnikov2010,MendelGleasonPhD2011}.
+program analysis, software testing, formal verification \cite{Klyuchnikov2010,Lisitsa2017,MendelGleasonPhD2011}.
+It is closely related to partial evaluation \cite{Jones:1993:PEA:153676} and deforestation.
+Different extensions of the basic supercompilation approach are also studied, aiming to further increase
+its power -- for example, distillation \cite{Hamilton07}, higher-level supercompilation \cite{Klyuchnikov:META2010:HigherLevelScp}, etc.
 
 Supercompilation performs very powerful program transformation by simulating
 the actual execution of the input program on a whole set of possible inputs
@@ -58,10 +61,10 @@ empirically fine-tuned heuristics.
 The main goal of the present study is to experiment with a more
 principled approach to optimizing the size of the program resulting
 from supercompilation.
-This approach is based on a couple of key ideas:
+This approach is based on a few of key ideas:
 \begin{itemize}
   \item use multi-result supercompilation\footnote{often abbreviated as \emph{MRSC} from now on} 
-    \cite{KlyuchnikovMRSCBranch,Romanenko2014StagedMRSC}
+    \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC,Romanenko2014StagedMRSC}
     to systematically explore a large set of different generalizations during 
     the transformation process, 
     leading to different trade-offs between performed optimizations and code explosion;
