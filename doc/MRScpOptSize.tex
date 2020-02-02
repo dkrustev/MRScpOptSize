@@ -559,6 +559,115 @@ We give the configuration graph sizes for each of the four types of results (fir
   \end{tabular}
 \end{table}
 
+Several interesting observations stem from analyzing the selected resulting programs themselves:
+\begin{itemize}
+  \item In 2 cases (``\verb|eqBool| symmetry'' and ``exp growth'') the minimum program coincides with the first (most generalizing) one;
+    in 1 case (``double append'') -- with the last (least generalizing) result. 
+    In ``KMP test'' the difference between the minimum-size and the last program is minimal.
+    This confirms the highly unpredictable impact of driving+generalization on program size.
+  \item Note, however, that ``double append'' is a bit of an outlier -- it results in only 4 programs,
+    one of which (the largest) is isomorphic to the input. The 2 smallest ones are the expected
+    optimized version, shown in Fig. \ref{fig:DoubleAppResult}.
+  \item In all cases, the size of the first result is closer to the minimum than to the maximum size.
+    This confirms that our choice of generalization ensures limited growth of the result size.
+  \item The smallest/last ``KMP test'' graph produces the expected optimal (as execution time) program,
+    as shown in Fig. \ref{fig:KMPResult}.
+  \item The last ``\verb|eqBool| symmetry'' graph produces a program, which can indeed serve as evidence of the
+    symmetry of Boolean equality -- Fig. \ref{fig:BoolEqSymResult}.
+  \item The results of ``exp growth'' are especially interesting in view of our main goal.
+    The last result is the same as produced by S{\o}rensen's supercompiler --
+    \verb|B(B(B(z, z), B(z, z)), B(B(z, z), B(z, z)))| -- clearly suffering form code-size explosion.
+    The minimum-size (and also first) program -- shown in Fig. \ref{fig:ExpGrowthMinResult} --
+    avoids the pitfall of code-size explosion, thanks to generalization.
+    It, however, has also missed some opportunities for static evaluation.
+    Interestingly, if we analyze the full set of results, there is another
+    graph of size 17, which produces a program, which has eliminated all possible static reductions,
+    while avoiding the risk of code explosion -- Fig. \ref{fig:ExpGrowthOptResult}.
+    Apparently, we need a more refined approach for looking for (close to) minimum-size programs, which
+    would not miss such results.
+    One explanation of this discrepancy is that we compare configuration graph sizes, and not
+    the sizes of the programs produced by residualizing these graphs.
+    As residualization performs some optimizations (removing trivial lets, removing duplicated
+    function definitions, etc.), the relation between graph size and resulting program size
+    is not always a monotone function.
+    On the other hand, it would be difficult to find the minimum-size \emph{program}
+    without actually enumerating all such programs, which can be impractical in general.
+    A possible compromize is to study better size measures for configuration graphs, instead
+    of the simple node count we currently use.
+    For example, ignoring unfolding nodes can give a better idea for the expected size
+    of the residualized program, as unfolding nodes are ignored during residualization.
+    
+\end{itemize}
+
+\begin{figure}
+\begin{lstlisting}
+f_0(ys, zs) = f_0_case0(ys, zs);
+f_0_case0(Nil(), zs) = zs;
+f_0_case0(Cons(x0, xs0), zs) = Cons(x0, f_0(xs0, zs));
+f_(xs, ys, zs) = f__case0(xs, ys, zs);
+f__case0(Nil(), ys, zs) = f_0(ys, zs);
+f__case0(Cons(x00, xs00), ys, zs) = Cons(x00, f_(xs00, ys, zs));
+expression: f_(xs, ys, zs)
+\end{lstlisting}
+\caption{Optimized double-append}
+\label{fig:DoubleAppResult}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+f_1_0_0_0_1_0_0(s0, ss1) = f_1_0_0_0_1_0_0_case0(s0, ss1);
+f_1_0_0_0_1_0_0_case0(True(), ss1) = f_1_0_0_0_1_0_0_case1(ss1);
+f_1_0_0_0_1_0_0_case0(False(), ss1) = f_0(ss1);
+f_1_0_0_0_1_0_0_case1(Nil(), ) = False();
+f_1_0_0_0_1_0_0_case1(Cons(s0, ss0), ) = f_1_0_0_0_1_0_0_case2(s0, s0, ss0);
+f_1_0_0_0_1_0_0_case2(True(), s0, ss0) = f_1_0_0_0_1_0_0(s0, ss0);
+f_1_0_0_0_1_0_0_case2(False(), s0, ss0) = True();
+f_0(s) = f_0_case0(s);
+f_0_case0(Nil(), ) = False();
+f_0_case0(Cons(s0, ss0), ) = f_0_case1(s0, ss0);
+f_0_case1(True(), ss0) = f_0_case2(ss0);
+f_0_case1(False(), ss0) = f_0(ss0);
+f_0_case2(Nil(), ) = False();
+f_0_case2(Cons(s0, ss1), ) = f_1_0_0_0_1_0_0(s0, ss1);
+expression: f_0(s))
+\end{lstlisting}
+\caption{Optimized KMP Test Result}
+\label{fig:KMPResult}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+main_case0(True(), y) = main_case2(y);
+main_case0(False(), y) = main_case2(y);
+main_case2(True(), ) = True();
+main_case2(False(), ) = True();
+expression: main_case0(x, y)
+\end{lstlisting}
+\caption{``\texttt{eqBool} symmetry'' Optimal Result}
+\label{fig:BoolEqSymResult}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+f_3(xs0, y0) = f_3_let0(f_3_case0(xs0, y0));
+f_3_let0(w0) = B(w0, w0);
+f_3_case0(Nil(), y0) = y0;
+f_3_case0(Cons(x0, xs1), y0) = f_3(xs1, y0);
+expression: f_3(Cons(A(), Cons(A(), Nil())), z))
+\end{lstlisting}
+\caption{``exp growth'' Minimum-size Result}
+\label{fig:ExpGrowthMinResult}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+main_let1(w0) = B(w0, w0);
+expression: main_let1(main_let1(B(z, z)))
+\end{lstlisting}
+\caption{``exp growth'' Optimal Result}
+\label{fig:ExpGrowthOptResult}
+\end{figure}
+
 \section{Future Work}
 
 \section{Related Work}
@@ -571,10 +680,10 @@ We give the configuration graph sizes for each of the four types of results (fir
 
 \appendix
 
+\clearpage
 \section{Selecting Graphs from a $\mathtt{GraphSet}$}\label{app:FilterGraphSet}
 
-\begin{figure}
-\begin{lstlisting}
+\begin{lstlisting}[caption={Selecting a Graph of Minimum/Maximum Size from a Graph Set}]
 let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet =
   let selectMinMax (kx: int * 'A) (ky: int * 'A) : int * 'A =
     match kx, ky with
@@ -598,7 +707,6 @@ let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet
     | -1, _ -> (-1, GSNone)
     | k, gs -> (1 + k, GSBuild(c, [gs]))
 \end{lstlisting}
-\caption{Selecting a Graph of Minimum/Maximum Size from a Graph Set}
-\end{figure}
+
 
 \end{document}
