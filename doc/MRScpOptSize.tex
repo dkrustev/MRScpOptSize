@@ -1,0 +1,65 @@
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{VPT 2020} % Name of the event you are submitting to
+\usepackage{breakurl}             % Not needed if you use pdflatex only.
+\usepackage{underscore}           % Only needed if you use pdflatex.
+
+\title{Optimizing Program Size Using Multi-result Supercompilation}
+\author{Dimitur Nikolaev Krustev
+\institute{IGE+XAO Balkan\\ Sofia, Bulgaria}
+\email{\quad dkrustev@ige-xao.com}
+}
+\def\titlerunning{Optimizing Program Size Using MRSC}
+\def\authorrunning{D.N. Krustev}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This is a sentence in the abstract.
+This is another sentence in the abstract.
+This is yet another sentence in the abstract.
+This is the final sentence in the abstract.
+\end{abstract}
+
+\section{Introduction}
+
+Supercompilation was invented by Turchin\cite{TurchinSupercompilerConcept} and has found numerous
+applications, such as program optimization\cite{XX,YY}, program verification\cite{Klyuchnikov},
+$\ldots$.
+
+Supercompilation performs very powerful program transformation by simulating
+the actual execution of the input program on a whole set of possible inputs.
+The flip side of this power is that the behavior of supercompilation -- 
+with respect to both transformation time and result size --
+can be very unpredictable.
+This fact makes supercompilation problematic for including as an
+optimization step of a standard compiler, for example.
+Measures have been proposed to make supercompilation more
+well-behaved, both in execution time and result size\cite{SPJBolingbroke,JohnsonNordlander}.
+These proposals are all based on a combination of specially crafted and
+empirically fine-tuned heuristics.
+The main goal of the present study is to experiment with a more
+principled approach to optimizing the size of the program resulting
+from supercompilation.
+This approach is based on a couple of key ideas:
+\begin{itemize}
+  \item use multi-result supercompilation\footnote{often abbreviated as \emph{MRSC} from now on} 
+    to systematically explore a large set of different generalizations during 
+    the transformation process, 
+    leading to different trade-offs between performed optimizations and code explosion;
+  \item carefully select a generalization scheme, which can avoid all forms of
+    code duplication if applied systematically;
+  \item re-use ideas from Grechanik\cite{BigStepMRSC} to compactly represent and efficiently
+    explore the set of programs resulting from multi-result supercompilation.
+\end{itemize}
+
+\section{Summary of Multi-result Supercompilation}
+
+\section{Generalization Approach}
+
+\section{Related Work}
+
+%\nocite{*}
+\bibliographystyle{eptcs}
+\bibliography{MRScpOptSize}
+
+\end{document}
