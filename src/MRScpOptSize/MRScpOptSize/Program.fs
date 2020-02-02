@@ -13,6 +13,6 @@ let main argv =
     //Examples.mrScp Examples.appDef Examples.appAppExample
     //Examples.mrScp Examples.kmpDef Examples.kmpExample
     //Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "boolEqSym" Examples.kmpDef Examples.boolEqSymExample
-    //Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
-    Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
+    Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
+    //Examples.mrScpDump @"C:\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
     0 // return an integer exit code

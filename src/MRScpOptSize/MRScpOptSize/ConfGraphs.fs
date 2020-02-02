@@ -24,10 +24,10 @@ let rec graphSize g =
     match g with
     | CGLeaf _ -> 1
     | CGCon(_, gs) -> 1 + List.sumBy graphSize gs
-    | CGUnfold g -> graphSize g
+    | CGUnfold g -> 1 + graphSize g
     | CGCases(_, alts) -> 1 + List.sumBy (graphSize << snd) alts
     | CGFold _ -> 1
-    | CGLet(binds, g) -> List.sumBy (graphSize << snd) binds + graphSize g
+    | CGLet(binds, g) -> 1 + List.sumBy (graphSize << snd) binds + graphSize g
 
 module SimpleGraph =
 

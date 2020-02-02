@@ -19,8 +19,26 @@ let mrScp defs e =
         printfn "%A" (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
 
 let mrScpDump path name defs e =
+    let dumpSelected name1 s gs =
+        let gs' = MRScp.gset2graphs gs
+        assert (Seq.length gs' = 1)
+        let (_, g) = Seq.head gs'
+        let p = (Exp.CSE.purgeRepeatedFuns (ExtExp.extProg2Prog (Residualize.graph2prog g)))
+        System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_Graph%s.txt" name name1), 
+            sprintf "%s%A\n%A" s g p)
+
     let gs = MRScp.mrScp defs e
     System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_GraphSet.txt" name), sprintf "%A" gs)
+
+    let (minSize, gsMin) = MRScp.GraphSetOps.minMaxSizeGraph (<=) gs
+    dumpSelected "Min" (sprintf "minSize: %i\n" minSize) gsMin
+    let (maxSize, gsMax) = MRScp.GraphSetOps.minMaxSizeGraph (>=) gs
+    dumpSelected "Max" (sprintf "maxSize: %i\n" maxSize) gsMax
+    let gsFirst = MRScp.GraphSetOps.firstGraph gs
+    dumpSelected "First" "" gsFirst
+    let gsLast = MRScp.GraphSetOps.lastGraph gs
+    dumpSelected "Last" "" gsLast
+(*
     let cgs = MRScp.gset2graphs gs
     let mutable count = 0
     let mutable minSize = System.Int32.MaxValue
@@ -39,6 +57,7 @@ let mrScpDump path name defs e =
         totalSize <- gSize + totalSize
     System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_Stats.txt" name), 
         sprintf "count: %i\nminSize: %i\nmaxSize: %i\naverageSize: %f" count minSize maxSize ((double totalSize) / (double count)))
+*)
 
 let appDefStr = """
 append(Nil, ys) = ys;
