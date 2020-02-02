@@ -111,7 +111,7 @@ of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \end{itemize}
 The compact representation of the set of graphs is shown in Fig. \ref{fig:GraphSet}.
 We use direct excerpts of the F\# code of the implementation, but hopefully
-they will be readable by anyone familiar with other functional languages such as OCaml and Haskell.
+they will be readable by anyone familiar with other functional languages such as OCaml or Haskell.
 Another important caveat is that we have implemented MRSC for programs in a specific language,
 so some details will only become clear once we introduce this language.
 Still, the details of the language are not important for understanding the core
@@ -268,21 +268,21 @@ type DriveStepResult =
 \end{figure}
 
 \begin{itemize}
-  \item We cannot drive a variable any further: $\mathtt{drive} \llbracket x \rrbracket = \mathtt{DSNone}$;
+  \item We cannot drive a variable any further: $\mathtt{drive} \llbracket x \rrbracket = \mathtt{DSRNone}$;
   \item Driving a constructor results in a constructor node with all arguments available for
-    further driving: $\mathtt{drive} \llbracket C(e_1, \ldots, e_n) \rrbracket = \mathtt{DSCon}(C, e_1, \ldots, e_n)$;
+    further driving: $\mathtt{drive} \llbracket C(e_1, \ldots, e_n) \rrbracket = \mathtt{DSRCon}(C, e_1, \ldots, e_n)$;
   \item If we stumble upon a call to an ordinary function, we simply unfold its definition:
-    $\mathtt{drive} \llbracket f(e_1, \ldots, e_n) \rrbracket = \mathtt{DSUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])$,
-    where $f(x_1, \ldots, x_n) = e \in P$ and $ [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
+    $\mathtt{drive} \llbracket f(e_1, \ldots, e_n) \rrbracket = \mathtt{DSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])$,
+    where $f(x_1, \ldots, x_n) = e \in P$ and $e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
     denotes simultaneous substitution;
   \item The most intersting cases concern a call to a pattern-matching function, as the situation is
     differnt depending on the kind of the first argument:
     \begin{itemize}
       \item $\mathtt{drive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
-        $\mathtt{DSUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
+        $\mathtt{DSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
         where $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
       \item $\mathtt{drive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
-        $\mathtt{DSCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
+        $\mathtt{DSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
           $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))$
         where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$
         and $\mathtt{propagate}$ performs positive information propagation by substituting (a suitable renaming of) $p_i$ for $x$ 
@@ -584,10 +584,10 @@ Several interesting observations stem from analyzing the selected resulting prog
     avoids the pitfall of code-size explosion, thanks to generalization.
     It, however, has also missed some opportunities for static evaluation.
     Interestingly, if we analyze the full set of results, there is another
-    graph of size 17, which produces a program, which has eliminated all possible static reductions,
+    graph of size 17, that produces a program, which has eliminated all possible static reductions,
     while avoiding the risk of code explosion -- Fig. \ref{fig:ExpGrowthOptResult}.
-    Apparently, we need a more refined approach for looking for (close to) minimum-size programs, which
-    would not miss such results.
+    Apparently, we need a more refined approach for looking for (close to) minimum-size programs, 
+    if we do not want to miss such results.
     One explanation of this discrepancy is that we compare configuration graph sizes, and not
     the sizes of the programs produced by residualizing these graphs.
     As residualization performs some optimizations (removing trivial lets, removing duplicated
@@ -597,8 +597,8 @@ Several interesting observations stem from analyzing the selected resulting prog
     without actually enumerating all such programs, which can be impractical in general.
     A possible compromize is to study better size measures for configuration graphs, instead
     of the simple node count we currently use.
-    For example, ignoring unfolding nodes can give a better idea for the expected size
-    of the residualized program, as unfolding nodes are ignored during residualization.
+    For example, ignoring unfolding nodes when calculating size can give a better idea for the expected size
+    of the residualized program, as unfolding nodes are skipped during residualization.
     
 \end{itemize}
 
