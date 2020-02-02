@@ -40,3 +40,4 @@ isSublist(p, s) = match(p, s, p, s);
 let kmpDef = str2defs kmpDefStr
 let kmpExample () = stdScp kmpDef (ExpParser.str2exp "isSublist(Cons(True, Cons(True, Cons(False, Nil))), s)")
 
+let boolEqSymExample () = stdScp kmpDef (ExpParser.str2exp "eqBool(eqBool(x, y), eqBool(y, x))")
