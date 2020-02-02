@@ -22,19 +22,20 @@ This is the final sentence in the abstract.
 
 \section{Introduction}
 
-Supercompilation was invented by Turchin\cite{TurchinSupercompilerConcept} and has found numerous
-applications, such as program optimization\cite{XX,YY}, program verification\cite{Klyuchnikov},
+Supercompilation was invented by Turchin \cite{TurchinSupercompilerConcept} and has found numerous
+applications, such as program optimization\cite{XX,YY}, program verification \cite{Klyuchnikov},
 $\ldots$.
 
 Supercompilation performs very powerful program transformation by simulating
-the actual execution of the input program on a whole set of possible inputs.
+the actual execution of the input program on a whole set of possible inputs
+simultaneously.
 The flip side of this power is that the behavior of supercompilation -- 
 with respect to both transformation time and result size --
 can be very unpredictable.
 This fact makes supercompilation problematic for including as an
 optimization step of a standard compiler, for example.
 Measures have been proposed to make supercompilation more
-well-behaved, both in execution time and result size\cite{SPJBolingbroke,JohnsonNordlander}.
+well-behaved, both in execution time and result size \cite{bolingbroke2011improving,Jonsson2011Taming}.
 These proposals are all based on a combination of specially crafted and
 empirically fine-tuned heuristics.
 The main goal of the present study is to experiment with a more
@@ -48,15 +49,34 @@ This approach is based on a couple of key ideas:
     leading to different trade-offs between performed optimizations and code explosion;
   \item carefully select a generalization scheme, which can avoid all forms of
     code duplication if applied systematically;
-  \item re-use ideas from Grechanik\cite{BigStepMRSC} to compactly represent and efficiently
+  \item re-use ideas from Grechanik et al. \cite{Romanenko2014StagedMRSC} to compactly represent and efficiently
     explore the set of programs resulting from multi-result supercompilation.
 \end{itemize}
+We outline the main ideas of multi-result supercompilation --
+as well as the specific approach to its implementation that we use --
+in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this study:
+\begin{itemize}
+  \item We define a particular strategy for generalization during MRSC (Sec. \ref*{sec:Generalize}), which:
+    \begin{itemize}
+      \item avoids any risk of code duplication (when applied);
+      \item avoids unnecessary increase of the search space of possible
+        transformed programs, which MRSC must explore
+    \end{itemize}
+  \item We analyze the performance of the proposed strategy on several
+    simple examples (Sec. \ref*{sec:EmpEval}).
+\end{itemize}
 
-\section{Summary of Multi-result Supercompilation}
+\section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
 
-\section{Generalization Approach}
+\section{Generalization Approach}\label{sec:Generalize}
+
+\section{Empirical Evaluation}\label{sec:EmpEval}
+
+\section{Future Work}
 
 \section{Related Work}
+
+\section{Conclusions}
 
 %\nocite{*}
 \bibliographystyle{eptcs}
