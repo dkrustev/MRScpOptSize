@@ -19,3 +19,17 @@ module List =
         | [] -> []
         | x::xs -> if List.exists (fun y -> x = y) ys then difference xs ys else x::difference xs ys
 
+    let rec cartesian (xss: list<list<'A>>) : list<list<'A>> =
+        let rec helper xs yss =
+            match xs with
+            | [] -> []
+            | x::xs -> List.map (fun ys -> x::ys) yss @ helper xs yss
+        match xss with
+        | [] -> [ [] ]
+        | xs::xss -> helper xs (cartesian xss)
+
+module Seq =
+    let cartesian items =
+        items |> Seq.fold (fun acc s ->
+            seq { for x in acc do for y in s do yield x @ [y] }) (Seq.singleton [])
+
