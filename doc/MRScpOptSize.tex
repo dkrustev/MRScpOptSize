@@ -229,7 +229,7 @@ The object language we consider is a first-order functional language with ordina
 pattern-matching function definitions.
 Its syntax is summarized in Fig. \ref{fig:SLLsyntax}.
 A very similar language is often used in many introductions to positive
-supecompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
+supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
 We assume the language has a call-by-name semantics, as this case is easiest to supercompile,
 but we skip a more detailed presentation of the semantics of the language, assuming it mostly obvious.
@@ -280,8 +280,8 @@ type DriveStepResult =
     $\mathtt{drive} \llbracket f(e_1, \ldots, e_n) \rrbracket = \mathtt{DSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])$,
     where $f(x_1, \ldots, x_n) = e \in P$ and $e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
     denotes simultaneous substitution;
-  \item The most intersting cases concern a call to a pattern-matching function, as the situation is
-    differnt depending on the kind of the first argument:
+  \item The most interesting cases concern a call to a pattern-matching function, as the situation is
+    different depending on the kind of the first argument:
     \begin{itemize}
       \item $\mathtt{drive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
         $\mathtt{DSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
@@ -316,7 +316,7 @@ type ConfGraph =
 \label{fig:ConfGraph}
 \end{figure}
 
-\subsection{Multi-result Driving And Generaliztion}
+\subsection{Multi-result Driving And Generalization}
 
 As already mentioned, a key difference in multi-result supercompilation is
 that driving and generalization are grouped together: a \emph{multi-driving}
@@ -326,12 +326,12 @@ can be different kinds of generalizations.
 The choice of generalization strategy depends on the intended use of the
 multi-result supercompiler.
 In our case, the main goal is to find a program of optimal size among the results.
-Previous analyzes have shown that one of the main reasons for code size expolosion in
+Previous analyzes have shown that one of the main reasons for code size explosion in
 supercompilation is the unrestricted duplication of sub-expressions during driving.
-Of course, sometimes such duplication pays off, as it leads to new opportunieties 
+Of course, sometimes such duplication pays off, as it leads to new opportunities 
 for optimization.
 But this is not always the case.
-These observations hint us to consider two guidning principles that should helps us attain our goal:
+These observations hint us to consider two guiding principles that should helps us attain our goal:
 \begin{itemize}
   \item if standard driving can produce code duplication, provide also a generalized
     configuration, where no (non-trivial) sub-expressions are duplicated;
@@ -389,7 +389,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
   \item When we pattern-match on a variable, there can be some code duplication during
     information propagation. 
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
-    We have currently decided to accept this limited form ot potential duplication, without adding a generalization:
+    We have currently decided to accept this limited form of potential duplication, without adding a generalization:
     $\mathtt{mrdrive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
     $[\mathtt{MDSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
     $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))]$
@@ -433,7 +433,7 @@ GSBuild
 
 We have studied the behaviour of the proposed multi-result supercompiler on a few simple
 examples, with a focus on the resulting program size.
-A streightforward approach, which works for some of the smaller examples,
+A straightforward approach, which works for some of the smaller examples,
 is to enumerate all resulting configuration graphs and gather statistics from them.
 For one example -- the well-known ``KMP test'' -- this approach turned out to be too
 time consuming.
@@ -600,7 +600,7 @@ Several interesting observations stem from analyzing the selected resulting prog
     is not always a monotone function.
     On the other hand, it would be difficult to find the minimum-size \emph{program}
     without actually enumerating all such programs, which can be impractical in general.
-    A possible compromize is to study better size measures for configuration graphs, instead
+    A possible compromise is to study better size measures for configuration graphs, instead
     of the simple node count we currently use.
     For example, ignoring unfolding nodes when calculating size can give a better idea for the expected size
     of the residualized program, as unfolding nodes are skipped during residualization.
@@ -682,24 +682,24 @@ The unpredictability of supercompilation with respect to both performance and
 result size is a well-established issue.
 Problems with code duplication and result size are discussed by S{\o}rensen \cite{Sorensen1994TurchinSupercompiler}, 
 for example.
-Few works directly tacle this problem, however.
+Few works directly tackle this problem, however.
 Bolingbroke et al. \cite{bolingbroke2011improving} study heuristics for improving the general
 performance of a specific supercompiler, in order to use it as an automatic phase of an optimizing 
 compiler for Haskell.
 Some of these heuristics concern avoiding code duplication, and as a consequence they may
 lead to improvements in result size.
 The key idea is to roll back -- discarding some work done by the supercompiler -- if the heuristics
-indicate that this work is not leading to a usefull result (a form of generalization).
+indicate that this work is not leading to a useful result (a form of generalization).
 Speculative execution can also help with code size in some instances.
 One problem with this approach is that is not clear how to generalize it or
 apply it to a completely different supercompiler.
 The main advantage is that by carefully selecting heuristics suitable for the specific
 supercompiler, the authors report good results on a number of representative benchmarks.
 
-Jonsson et al. \cite{Jonsson2011Taming} explicitly address both the issue of code explosing and
+Jonsson et al. \cite{Jonsson2011Taming} explicitly address both the issue of code explosion and
 the related issue of supercompilation time.
 The main idea is again to discard the result of supercompiling certain program fragments
-if they do not meet certain usefullness criteria (based on the number of reductions performed 
+if they do not meet certain usefulness criteria (based on the number of reductions performed 
 by the supercompiler and the resulting code size).
 We can again consider this a form of generalization.
 When such generalization happens, however, is based on specific hand-picked heuristics,
@@ -722,7 +722,7 @@ even for the small examples we want to analyze.
 \section{Conclusions and Future Work}
 
 We have presented a study of the feasibility to control result size after supercompilation
--- based on using multi-result supercompilation coupled with a specifig generalization
+-- based on using multi-result supercompilation coupled with a specific generalization
 strategy avoiding code duplication.
 While the idea of multi-result supercompilation is not new, the idea to combine it
 with a specific generalization strategy -- geared toward reducing result side --
@@ -750,10 +750,10 @@ Clearly the first thing to do, however, is to test the proposed approach on a la
 different examples.
 The current list of analyzed examples is so small, that we consider the current proposal
 rather a work in progress.
-Such an extented set of tests can give more insight on the strengths and weaknesses of the
+Such an extended set of tests can give more insight on the strengths and weaknesses of the
 proposed technique, and probably suggest other ideas for further study.
 
-Provided we obtain mostly encouringing results from further testing, the next logical 
+Provided we obtain mostly encouraging results from further testing, the next logical 
 step would be to make the approach more practical:
 \begin{itemize}
   \item make an implementation covering a larger object language, closer to functional languages
@@ -761,7 +761,7 @@ step would be to make the approach more practical:
   \item provide a larger set of functions for quickly filtering useful results.
 \end{itemize}
 
-From a more theoretical perspective, it would be intersting to try to formulate properties
+From a more theoretical perspective, it would be interesting to try to formulate properties
 of generalization, which can give some upper bounds on the code size of MRSC results.
 The task is not trivial, because of unfolding, which can replace the current configuration
 with a new one of unrelated size (even if we avoid code duplication at this point).
