@@ -3,6 +3,19 @@
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
 \usepackage{underscore}           % Only needed if you use pdflatex.
 
+\usepackage{listings}
+\lstset{
+  language=Caml,
+  defaultdialect=[Objective]Caml,
+  basicstyle=\scriptsize,
+  frame=tb
+  %	basicstyle=\small\ttfamily,
+  %	commentstyle=\textit,
+  %	keywordstyle=\bfseries
+}
+
+\usepackage{stmaryrd} % for \{ll,rr}bracket	
+
 \title{Optimizing Program Size Using Multi-result Supercompilation}
 \author{Dimitur Nikolaev Krustev
 \institute{IGE+XAO Balkan\\ Sofia, Bulgaria}
@@ -67,6 +80,49 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 \end{itemize}
 
 \section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
+
+Our implementation of multi-result supercompilation mostly follows the same
+generic framework used in \cite{Romanenko2014StagedMRSC,Krustev2014MRSC}.
+It offers some important simplifications compared by the original work
+of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,MRSCToolkit}:
+\begin{itemize}
+  \item It is based on big-step driving.
+  \item All the set of transformed programs is represented compactly
+    in a tree-like data structure, which further permits not only
+    recovering the full set of configuration graphs, but also
+    performing efficiently some kinds of queries on this set.
+\end{itemize}
+The compact representation of the set of graphs is shown in Fig. \ref{fig:GraphSet}.
+We use direct excerpts of the F\# code of the implementation, but hopefully
+they will be readable by anyone familiar with other functional languages such as OCaml and Haskell.
+This representation is termed \emph{lazy graph} by Grechanik et al. \cite{Romanenko2014StagedMRSC},
+and can be viewed as a domain-specific language (DSL) describing the construction of the
+complete set of configuration graphs produced by multi-result supercompilation.
+The semantics of this DSL is shown in the same Fig. \ref{fig:GraphSet} as
+a function \lstinline|gset2graphs| expanding a \lstinline|GraphSet| into a sequence 
+of configuration graphs.
+Note the use of \lstinline|Seq.cartesian| to compose the sub-graphs of 
+each graph node from the list of sub-graphs in the compact representation.
+
+\begin{figure}
+\begin{lstlisting}
+type GraphSet =
+  | GSNone
+  | GSFold of MConf * int * list<VarName * VarName>
+  | GSBuild of MConf * list<list<GraphSet>>
+
+let rec gset2graphs (gs: GraphSet) : seq<MConf * ConfGraph> =
+  match gs with
+  | GSNone -> Seq.empty
+  | GSFold(conf, n, ren) -> seq{ yield (conf, CGFold(n, ren)) }
+  | GSBuild(conf, xss) ->
+    xss
+    |> Seq.collect (fun xs -> xs |> Seq.map gset2graphs |> Seq.cartesian)
+    |> Seq.map (fun cgs -> (conf, buildGraph (snd conf) cgs))
+\end{lstlisting}
+\caption{Representation and Expansion of Graph Sets}
+\label{fig:GraphSet}
+\end{figure}
 
 \section{Generalization Approach}\label{sec:Generalize}
 
