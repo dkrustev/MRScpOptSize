@@ -93,7 +93,7 @@ Most supercompilers perform generalization of the current configuration only
 when forced to do so by the whistle.
 The only subtlety, as suggested by S{\o}rensen et al. \cite{sorm98b} is to select
 whether to generalize the lower or the upper configuration of the two that
-have caused the whistle.
+have caused the whistle to blow.
 One of the key insights behind multi-result supercompilation is that the place
 where the whistle has blown is not always the best place to make a generalization.
 The proposed solution is radical: do not generalize when the whistle has blown,
@@ -109,7 +109,7 @@ It offers some important simplifications compared by the original work
 of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \begin{itemize}
   \item It is based on big-step driving.
-  \item All the set of transformed programs is represented compactly
+  \item The whole set of transformed programs is represented compactly
     in a tree-like data structure, which further permits not only
     recovering the full set of configuration graphs, but also
     performing efficiently some kinds of queries on this set.
@@ -122,7 +122,7 @@ so some details will only become clear once we introduce this language.
 Still, the details of the language are not important for understanding the core
 MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 We prefer to show excerpts from our actual implementation for concreteness.
-This representation is termed \emph{lazy graph} by Grechanik et al. \cite{Romanenko2014StagedMRSC},
+The representation from Fig. \ref{fig:GraphSet} is termed \emph{lazy graph} by Grechanik et al. \cite{Romanenko2014StagedMRSC},
 and can be viewed as a domain-specific language (DSL) describing the construction of the
 complete set of configuration graphs produced by multi-result supercompilation.
 \begin{itemize}
@@ -199,8 +199,8 @@ let mrScp (defs: Defs) (e: Exp) : GraphSet =
 
 The main MRSC algorithm -- the one that builds the graph set of a given initial
 configuration -- is shown in Fig. \ref{fig:MRSCAlg}.
-We can ignore the details about splitting the configuration history into local
-and global one -- they mostly follow established heuristics as in S{\o}rensen et al. 
+We can ignore the details about splitting the configuration history into a local
+and a global one -- they mostly follow established heuristics as in S{\o}rensen et al. 
 \cite{Sorensen1994TurchinSupercompiler,sorm98b}.
 The overall approach is simple - if folding is possible, we produce a fold node 
 and stop pursuing the current configuration.
@@ -331,7 +331,7 @@ supercompilation is the unrestricted duplication of sub-expressions during drivi
 Of course, sometimes such duplication pays off, as it leads to new opportunieties 
 for optimization.
 But this is not always the case.
-These observations hint us to consider two guidning principles that should helps us attain this goal:
+These observations hint us to consider two guidning principles that should helps us attain our goal:
 \begin{itemize}
   \item if standard driving can produce code duplication, provide also a generalized
     configuration, where no (non-trivial) sub-expressions are duplicated;
@@ -637,7 +637,7 @@ f_0_case1(True(), ss0) = f_0_case2(ss0);
 f_0_case1(False(), ss0) = f_0(ss0);
 f_0_case2(Nil(), ) = False();
 f_0_case2(Cons(s0, ss1), ) = f_1_0_0_0_1_0_0(s0, ss1);
-expression: f_0(s))
+expression: f_0(s)
 \end{lstlisting}
 \caption{Optimized KMP Test Result}
 \label{fig:KMPResult}
@@ -701,7 +701,7 @@ the related issue of supercompilation time.
 The main idea is again to discard the result of supercompiling certain program fragments
 if they do not meet certain usefullness criteria (based on the number of reductions performed 
 by the supercompiler and the resulting code size).
-We can consider again this a form of generalization.
+We can again consider this a form of generalization.
 When such generalization happens, however, is based on specific hand-picked heuristics,
 apparently based on analyzing the results of different test runs.
 
@@ -716,7 +716,7 @@ This work is most closely related to ours: we re-use the same ideas for implemen
 our multi-result supercompiler, and for efficiently filtering its results by criteria.
 Our main emphasis, however, is on using MRSC together with a generalization strategy, which
 is explicitly tailored towards avoiding code duplication, and hence, optimizing result size.
-We pay much less attention to supercompilation time, as long as it is not unacceptably long
+We pay much less attention to supercompilation time, as long as it is not unacceptably big
 even for the small examples we want to analyze.
 
 \section{Conclusions and Future Work}
@@ -731,10 +731,10 @@ The current results of the approach -- based on a small set of typical supercomp
 are encouraging:
 \begin{itemize}
   \item the smallest configuration graphs we produce are always of small size, comparable
-    to the size of the input, and typically much smaller than the largest possible size;
+    to the size of the input, and typically much smaller than the largest results;
   \item often the results of small size (though not necessarily the smallest) also feature 
     significant amount of optimizations, comparable to what a standard classical supercompiler
-    can achieve on the same task
+    can achieve on the same task.
 \end{itemize}
 
 We have already hinted at some areas for potential improvements of the proposed approach:
@@ -757,7 +757,7 @@ Provided we obtain mostly encouringing results from further testing, the next lo
 step would be to make the approach more practical:
 \begin{itemize}
   \item make an implementation covering a larger object language, closer to functional languages
-    in actual use;
+    actually used in practice;
   \item provide a larger set of functions for quickly filtering useful results.
 \end{itemize}
 
