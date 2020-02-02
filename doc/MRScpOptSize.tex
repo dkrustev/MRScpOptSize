@@ -38,8 +38,7 @@ This is the final sentence in the abstract.
 
 Supercompilation was invented by Turchin \cite{TurchinSupercompilerConcept} and has found numerous
 applications, such as program optimization\cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}, 
-program verification \cite{Klyuchnikov2010,MendelGleasonPhD2011},
-$\ldots$.
+program analysis, software testing, formal verification \cite{Klyuchnikov2010,MendelGleasonPhD2011}.
 
 Supercompilation performs very powerful program transformation by simulating
 the actual execution of the input program on a whole set of possible inputs
@@ -671,7 +670,25 @@ expression: main_let1(main_let1(B(z, z)))
 \label{fig:ExpGrowthOptResult}
 \end{figure}
 
-\section{Future Work}
+\section{Related Work}
+
+\section{Conclusions and Future Work}
+
+We have presented a study of the feasibility to control result size after supercompilation
+-- based on using multi-result supercompilation coupled with a specifig generalization
+strategy avoiding code duplication.
+While the idea of multi-result supercompilation is not new, the idea to combine it
+with a specific generalization strategy -- geared toward reducing result side --
+appears new.
+The current results of the approach -- based on a small set of typical supercompilation examples --
+are encouraging:
+\begin{itemize}
+  \item the smallest configuration graphs we produce are always of small size, comparable
+    to the size of the input, and typically much smaller than the largest possible size;
+  \item often the results of small size (though not necessarily the smallest) also feature 
+    significant amount of optimizations, comparable to what a standard classical supercompiler
+    can achieve on the same task
+\end{itemize}
 
 We have already hinted at some areas for potential improvements of the proposed approach:
 \begin{itemize}
@@ -704,10 +721,6 @@ with a new one of unrelated size (even if we avoid code duplication at this poin
 On the other hand, at least in the case of our simple object language, we have a fixed
 list of function definitions, which can give us some bound on the configuration size
 after unfolding.
-
-\section{Related Work}
-
-\section{Conclusions}
 
 %\nocite{*}
 \bibliographystyle{eptcs}
