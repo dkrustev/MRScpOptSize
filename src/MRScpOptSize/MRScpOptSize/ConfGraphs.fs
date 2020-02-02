@@ -20,6 +20,15 @@ let subgraphs g =
     | CGLet(defs, g) -> List.map snd defs @ [g]
     | _ -> []
 
+let rec graphSize g =
+    match g with
+    | CGLeaf _ -> 1
+    | CGCon(_, gs) -> 1 + List.sumBy graphSize gs
+    | CGUnfold g -> graphSize g
+    | CGCases(_, alts) -> 1 + List.sumBy (graphSize << snd) alts
+    | CGFold _ -> 1
+    | CGLet(binds, g) -> List.sumBy (graphSize << snd) binds + graphSize g
+
 module SimpleGraph =
 
     let rec private buildGraphRec (defs: Defs) (maxLvl: int) (nestLvl: int) (hist: list<int * Exp>) (e: Exp) : ConfGraph =
