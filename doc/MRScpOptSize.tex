@@ -334,6 +334,7 @@ we need to avoid code duplication by generalization.
 In order to express generalization as a possible result of a driving step,
 we extend our representation of a step result - Fig. \ref{fig:MultiDriveStepResult}.
 The same figure shows the implementation of \verb|mdsrSubExps| that we have encountered earlier.
+The source function \verb|multiDriveSteps| will be denoted $\mathtt{mrdrive}$ for brevity below.
 
 \begin{figure}
 \begin{lstlisting}
@@ -395,6 +396,29 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     where $x_0, \ldots, x_n$ are, as usual, fresh.
 \end{itemize}
 
+To illustrate the process on a very simple example, consider the trivial program 
+$P = \{ \mathtt{f(x,y)=Pair(x,y);} \}$. 
+If we supercompile the expression \verb|f(A,B)|, we shall obtain the graph set shown in Fig. \ref{fig:TrivGraphSet},
+which corresponds to 2 configuration graphs -- one with generalization, and one without.
+
+\begin{figure}
+\begin{lstlisting}
+GSBuild
+  ((MDSRUnfold f(A(), B()), f(A(), B())),
+   [[GSBuild
+      ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), Pair(x0, y0)),
+       [[GSBuild ((MDSRCon ("Pair",[x0; y0]), x0),[[]]);
+         GSBuild ((MDSRCon ("Pair",[x0; y0]), y0),[[]])]]);
+     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), A()),[[]]);
+     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), B()),[[]])];
+    [GSBuild
+       ((MDSRUnfold Pair(A(), B()), Pair(A(), B())),
+        [[GSBuild ((MDSRCon ("Pair",[A(); B()]), A()),[[]]);
+          GSBuild ((MDSRCon ("Pair",[A(); B()]), B()),[[]])]])]])
+\end{lstlisting}
+\caption{The Graph Set of a Trivial Program}
+\label{fig:TrivGraphSet}
+\end{figure}
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
