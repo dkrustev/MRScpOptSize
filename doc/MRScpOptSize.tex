@@ -37,7 +37,8 @@ This is the final sentence in the abstract.
 \section{Introduction}
 
 Supercompilation was invented by Turchin \cite{TurchinSupercompilerConcept} and has found numerous
-applications, such as program optimization\cite{XX,YY}, program verification \cite{Klyuchnikov},
+applications, such as program optimization\cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}, 
+program verification \cite{Klyuchnikov2010,MendelGleasonPhD2011},
 $\ldots$.
 
 Supercompilation performs very powerful program transformation by simulating
@@ -58,6 +59,7 @@ from supercompilation.
 This approach is based on a couple of key ideas:
 \begin{itemize}
   \item use multi-result supercompilation\footnote{often abbreviated as \emph{MRSC} from now on} 
+    \cite{KlyuchnikovMRSCBranch,Romanenko2014StagedMRSC}
     to systematically explore a large set of different generalizations during 
     the transformation process, 
     leading to different trade-offs between performed optimizations and code explosion;
@@ -84,7 +86,7 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 
 Most supercompilers perform generalization of the current configuration only
 when forced to do so by the whistle.
-The only subtlety, as suggested by S{\o}rensen et al. \cite{PosScp} is to select
+The only subtlety, as suggested by S{\o}rensen et al. \cite{sorm98b} is to select
 whether to generalize the lower or the upper configuration of the two that
 have caused the whistle.
 One of the key insights behind multi-result supercompilation is that the place
@@ -97,9 +99,9 @@ This parallel analysis of alternative configurations is the source
 of the multiple resulting programs.
 
 Our implementation of multi-result supercompilation mostly follows the same
-generic framework used in \cite{Romanenko2014StagedMRSC,Krustev2014MRSC}.
+generic framework used in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 It offers some important simplifications compared by the original work
-of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,MRSCToolkit}:
+of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \begin{itemize}
   \item It is based on big-step driving.
   \item All the set of transformed programs is represented compactly
@@ -113,7 +115,7 @@ they will be readable by anyone familiar with other functional languages such as
 Another important caveat is that we have implemented MRSC for programs in a specific language,
 so some details will only become clear once we introduce this language.
 Still, the details of the language are not important for understanding the core
-MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,Krustev2014MRSC}.
+MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 We prefer to show excerpts from our actual implementation for concreteness.
 This representation is termed \emph{lazy graph} by Grechanik et al. \cite{Romanenko2014StagedMRSC},
 and can be viewed as a domain-specific language (DSL) describing the construction of the
@@ -193,7 +195,8 @@ let mrScp (defs: Defs) (e: Exp) : GraphSet =
 The main MRSC algorithm -- the one that builds the graph set of a given initial
 configuration -- is shown in Fig. \ref{fig:MRSCAlg}.
 We can ignore the details about splitting the configuration history into local
-and global one -- they mostly follow established heuristics as in S{\o}rensen et al. \cite{PosScp}.
+and global one -- they mostly follow established heuristics as in S{\o}rensen et al. 
+\cite{Sorensen1994TurchinSupercompiler,sorm98b}.
 The overall approach is simple - if folding is possible, we produce a fold node 
 and stop pursuing the current configuration.
 Otherwise we check the whistle -- in our case, the now standard homeomorphic embedding relation.
@@ -221,7 +224,7 @@ The object language we consider is a first-order functional language with ordina
 pattern-matching function definitions.
 Its syntax is summarized in Fig. \ref{fig:SLLsyntax}.
 A very similar language is often used in many introductions to positive
-supecompilation \cite{PosScp,KlyuchnikovTMR}.
+supecompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
 We assume the language has a call-by-name semantics, as this case is easiest to supercompile,
 but we skip a more detailed presentation of the semantics of the language, assuming it mostly obvious.
@@ -290,7 +293,7 @@ type DriveStepResult =
     \end{itemize}
 \end{itemize}
 We deliberately omit many low-level details in this description, as they are well-known and can be found
-in most introductions to positive supercompilation \cite{PosScp,KlyuchnikovTMR}.
+in most introductions to positive supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 Using this definition of driving, plus the usual definitions of folding, whistle, and generalization, 
 we can build configuration graphs of the form shown in Fig. \ref{fig:ConfGraph}.
 
@@ -537,7 +540,7 @@ The example programs and expressions are shown in Fig. \ref{fig:Examples}.
   \item ``\verb|eqBool| symmetry'' (Fig. \ref{sfig:SubstrPrg}, \ref{sfig:BoolEqSym}) is intended
     to show that Boolean equality is symmetric.
   \item ``exp growth'' (Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth}) is an example taken 
-    from S{\o}rensen's thesis \cite[Example 11.4.1]{SorensenThesis}, who attributes it to Sestoft.
+    from S{\o}rensen's thesis \cite[Example 11.4.1]{Sorensen1994TurchinSupercompiler}, who attributes it to Sestoft.
     It is aimed to demonstrate how classical supercompilation can produce output programs
     growing exponentially with respect to the input.
 \end{itemize}
