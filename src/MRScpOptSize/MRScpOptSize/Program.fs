@@ -3,7 +3,8 @@
 
 [<EntryPoint>]
 let main argv = 
-    let (paa, eaa) = Examples.appAppExample ()
+    //let (paa, eaa) = Examples.appAppExample ()
+    let (paa, eaa) = Examples.kmpExample ()
     printfn "%A" paa
     printfn "%A" eaa
     0 // return an integer exit code
