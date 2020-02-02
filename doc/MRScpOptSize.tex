@@ -81,6 +81,20 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 
 \section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
 
+Most supercompilers perform generalization of the current configuration only
+when forced to do so by the whistle.
+The only subtlety, as suggested by S{\o}rensen et al. \cite{PosScp} is to select
+whether to generalize the lower or the upper configuration of the two that
+have caused the whistle.
+One of the key insights behind multi-result supercompilation is that the place
+where the whistle has blown is not always the best place to make a generalization.
+The proposed solution is radical: do not generalize when the whistle has blown,
+but at any driving step, where a suitable generalization exists;
+pursue in parallel all possible combinations of driving/generalizing 
+the current configuration and its descendants.
+This parallel analysis of alternative configurations is the source
+of the multiple resulting programs.
+
 Our implementation of multi-result supercompilation mostly follows the same
 generic framework used in \cite{Romanenko2014StagedMRSC,Krustev2014MRSC}.
 It offers some important simplifications compared by the original work
@@ -95,14 +109,25 @@ of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,MRSCToolkit}:
 The compact representation of the set of graphs is shown in Fig. \ref{fig:GraphSet}.
 We use direct excerpts of the F\# code of the implementation, but hopefully
 they will be readable by anyone familiar with other functional languages such as OCaml and Haskell.
+Another important caveat is that we have implemented MRSC for programs in a specific language,
+so some details will only become clear once we introduce this language.
+Still, the details of the language are not important for understanding the core
+MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,Krustev2014MRSC}.
+We prefer to show excerpts from our actual implementation for concreteness.
 This representation is termed \emph{lazy graph} by Grechanik et al. \cite{Romanenko2014StagedMRSC},
 and can be viewed as a domain-specific language (DSL) describing the construction of the
 complete set of configuration graphs produced by multi-result supercompilation.
-The semantics of this DSL is shown in the same Fig. \ref{fig:GraphSet} as
-a function \lstinline|gset2graphs| expanding a \lstinline|GraphSet| into a sequence 
-of configuration graphs.
-Note the use of \lstinline|Seq.cartesian| to compose the sub-graphs of 
-each graph node from the list of sub-graphs in the compact representation.
+\begin{itemize}
+  \item Node \verb|GSNone| is used when the whistle has blown. 
+    It represents an empty set of configuration graphs;
+  \item Node \verb|GSFold| is used when folding is possible. 
+    It gives the relative distance to the upper node to which we fold, 
+    plus the renaming, which makes the folded configurations compatible.
+  \item Node \verb|GSBuild| is the most complicated one, representing a list
+    of alternative developments (driving or generalization) of the current configuration.
+    Each alternative, in turn, gives rise to a list of new configurations to explore,
+    and hence, to a list of nested graph sets.
+\end{itemize}
 
 \begin{figure}
 \begin{lstlisting}
@@ -123,6 +148,69 @@ let rec gset2graphs (gs: GraphSet) : seq<MConf * ConfGraph> =
 \caption{Representation and Expansion of Graph Sets}
 \label{fig:GraphSet}
 \end{figure}
+
+The semantics of this DSL is shown in the same Fig. \ref{fig:GraphSet} as
+a function \verb|gset2graphs| expanding a \verb|GraphSet| into a sequence 
+of configuration graphs.
+Note the use of \verb|Seq.cartesian| to compose the sub-graphs of 
+the graph node of each alternative configuration.
+
+\begin{figure}
+\begin{lstlisting}
+type private HistEntryKind = HEGlobal | HELocal
+
+let rec private mrScpRec (defs: Defs) (nestLvl: int) (hist: 
+  list<HistEntryKind * int * Exp>) (conf: MConf) : GraphSet =
+  let (_, e) = conf
+  let relevantHist hek hist =
+    match hek with
+    | HELocal -> hist |> List.takeWhile (fun (hek, _, _) -> hek = HELocal)
+    | HEGlobal -> hist |> List.filter (fun (hek, _, _) -> hek = HEGlobal)
+  match List.tryFindSome (fun (_, _, e1) -> renaming e1 e) hist with
+    | Some ((_, lvl, _), ren) -> GSFold(conf, nestLvl - lvl, ren)
+    | None ->
+      let rs = multiDriveSteps defs e
+      let hek = if List.tryFind (fun mdsr -> 
+                  match mdsr with MDSRCases _ -> true | _ -> false) rs = None
+                then HELocal else HEGlobal
+      let relHist = relevantHist hek hist
+      match List.tryFind (fun (_, _, e1) -> homeomorphicEmbedding e1 e) relHist with
+      | Some _ -> GSNone
+      | None ->
+        let confss = rs |> List.map (fun mdsr -> 
+          mdsrSubExps mdsr |> List.map (fun e -> (mdsr, e)))
+        let newHist = (hek, nestLvl, e)::hist
+        GSBuild(conf, List.map (List.map (mrScpRec defs (nestLvl + 1) newHist)) confss)
+
+let mrScp (defs: Defs) (e: Exp) : GraphSet =
+  mrScpRec defs 0 [] (MDSRUnfold e, e)
+\end{lstlisting}
+\caption{Main MRSC Algorithm}
+\label{fig:MRSCAlg}
+\end{figure}
+
+The main MRSC algorithm -- the one that builds the graph set of a given initial
+configuration -- is shown in Fig. \ref{fig:MRSCAlg}.
+We can ignore the details about splitting the configuration history into local
+and global one -- they mostly follow established heuristics as in S{\o}rensen et al. \cite{PosScp}.
+The overall approach is simple - if folding is possible, we produce a fold node 
+and stop pursuing the current configuration.
+Otherwise we check the whistle -- in our case, the now standard homeomorphic embedding relation.
+If it blows, we stop immediately with an empty set of resulting graphs.
+When there is neither folding nor a whistle, we continue analyzing the execution of the
+current configuration -- based on 2 language-specific functions:
+\begin{itemize}
+  \item \verb|multiDriveSteps| returns a number of alternatives for the current configuration --
+    either a driving step, or (possibly several different forms of) generalization.
+  \item \verb|mdsrSubExps| returns -- for a given alternative produced by the previous function --
+    the list of sub-configurations (in our case -- sub-expressions) that must be subjected
+    to further analyzis.
+\end{itemize}
+The implementation of both functions is described in Sec. \ref{sec:Generalize}.
+Once we have this list of lists of sub-configurations, we simply apply the same
+algorithm recursively, but with extended history.
+Readers familiar with the implementation details of other supercompilers are
+invited to compare them to the simplicity of this MRSC approach.
 
 \section{Generalization Approach}\label{sec:Generalize}
 
