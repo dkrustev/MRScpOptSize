@@ -49,7 +49,7 @@ It is closely related to partial evaluation \cite{Jones:1993:PEA:153676} and def
 Different extensions of the basic supercompilation approach are also studied, aiming to further increase
 its power -- for example, distillation \cite{Hamilton07}, higher-level supercompilation \cite{Klyuchnikov:META2010:HigherLevelScp}, etc.
 
-Supercompilation performs very powerful program transformation by simulating
+Supercompilation performs very powerful program transformations by simulating
 the actual execution of the input program on a whole set of possible inputs
 simultaneously.
 The flip side of this power is that the behavior of supercompilation -- 
@@ -80,14 +80,14 @@ We outline the main ideas of multi-result supercompilation --
 as well as the specific approach to its implementation that we use --
 in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this study:
 \begin{itemize}
-  \item We define a particular strategy for generalization during MRSC (Sec. \ref*{sec:Generalize}), which:
+  \item We define a particular strategy for generalization during MRSC (Sec. \ref{sec:Generalize}), which:
     \begin{itemize}
       \item avoids any risk of code duplication (when applied);
       \item avoids unnecessary increase of the search space of possible
-        transformed programs, which MRSC must explore
+        transformed programs, which MRSC must explore.
     \end{itemize}
   \item We analyze the performance of the proposed strategy on several
-    simple examples (Sec. \ref*{sec:EmpEval}).
+    simple examples (Sec. \ref{sec:EmpEval}).
 \end{itemize}
 
 \section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
@@ -374,7 +374,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
 \begin{itemize}
   \item The variable case is again trivial: \\
     $\mathtt{mrdrive} \llbracket x \rrbracket = [\mathtt{MDSRLeaf}(x)]$;
-    (We use $[\ldots; \ldots; \ldots]$ to denote lists of results.)
+    (We use $[\ldots; \ldots; \ldots]$ to denote a list of results.)
   \item There is no code duplication when driving a constructor, so we again make no generalization: 
     $\mathtt{mrdrive} \llbracket C(e_1, \ldots, e_n) \rrbracket = [\mathtt{MDSRCon}(C, e_1, \ldots, e_n)]$;
   \item The unfolding of a call to an ordinary function can produce code duplication, if some arguments appear
@@ -389,7 +389,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
   \item The case of a pattern-matching call with a known constructor is completely
     analogous to the previous one: \\
     $\mathtt{mrdrive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket = [$
-    $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$ \\
+    $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$ 
     $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])]$
     where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
   \item When we pattern-match on a variable, there can be some code duplication during
@@ -610,6 +610,8 @@ Several interesting observations stem from analyzing the selected resulting prog
     of the simple node count we currently use.
     For example, ignoring unfolding nodes when calculating size can give a better idea for the expected size
     of the residualized program, as unfolding nodes are skipped during residualization.
+    Another possibility is to find not only (one of) the minimum-size result(s), but the $N$ smallest
+    results ($N$ being an input parameter).
     
 \end{itemize}
 
@@ -731,7 +733,7 @@ We have presented a study of the feasibility to control result size after superc
 -- based on using multi-result supercompilation coupled with a specific generalization
 strategy avoiding code duplication.
 While the idea of multi-result supercompilation is not new, the idea to combine it
-with a specific generalization strategy -- geared toward reducing result side --
+with a specific generalization strategy -- geared toward reducing result size --
 appears new.
 The current results of the approach -- based on a small set of typical supercompilation examples --
 are encouraging:
