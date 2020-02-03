@@ -17,10 +17,13 @@
 \usepackage{stmaryrd} % for \{ll,rr}bracket	
 \usepackage{caption,subcaption}
 
+\usepackage{randtext}
+\newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
+
 \title{Optimizing Program Size Using Multi-result Supercompilation}
 \author{Dimitur Nikolaev Krustev
 \institute{IGE+XAO Balkan\\ Sofia, Bulgaria}
-\email{\quad dkrustev@ige-xao.com}
+\email{\quad \EmailAddress{dkrustev}{ige-xao.com}}
 }
 \def\titlerunning{Optimizing Program Size Using MRSC}
 \def\authorrunning{D.N. Krustev}
