@@ -82,7 +82,7 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 \begin{itemize}
   \item We define a particular strategy for generalization during MRSC (Sec. \ref{sec:Generalize}), which:
     \begin{itemize}
-      \item avoids any risk of code duplication (when applied);
+      \item avoids any risk of duplicating code during supercompilation (when applied);
       \item avoids unnecessary increase of the search space of possible
         transformed programs, which MRSC must explore.
     \end{itemize}
@@ -330,7 +330,8 @@ type DriveStepResult =
         in the corresponding branch $i$;
       \item $\mathtt{drive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
         $\mathtt{dsrMap}(\llbracket g(\bullet, e_1, \ldots, e_n) \rrbracket, \mathtt{drive} \llbracket f(e'_1, \ldots, e'_m) \rrbracket)$
-        where $\mathtt{dsrMap}$ transforms a driving step result by splicing it in an expression with a hole.
+        where $\mathtt{dsrMap}$ transforms a driving step result by splicing it in an expression with a hole\footnote{
+        We implement expressions with a signle hole as functions from expressions to expressions.}.
     \end{itemize}
 \end{itemize}
 We deliberately omit many low-level details in this description, as they are well-known and can be found
@@ -487,11 +488,16 @@ In particular, we have implemented functions to extract:
   \item the first configuration graph in the sequence (recall that by the ordering of 
     results during driving, it should contain the most generalizations);
   \item the last one -- with the least number of generalizations;
-  \item the smallest graph;
-  \item the largest graph.
+  \item the graph with the smallest number of nodes;
+  \item the graph with the largest number of nodes.
 \end{itemize}
 The implementation of the last 2 functions is provided in Appendix \ref{app:FilterGraphSet},
 the other 2 are similar.
+By comparing the first to the smallest and the largest graph we can see how 
+successful is the proposed generalization strategy in controlling code size.
+By comparing the first to the last graph, we can see the impact of different choices
+(avoiding to duplicate code vs. permitting it to hopefully have more optimization opportunities later)
+in different example programs.
 
 \begin{figure*}
 \begin{subfigure}[b]{\linewidth}
@@ -597,14 +603,14 @@ We give the configuration graph sizes for each of the four types of results (fir
 
 \begin{table}
   \centering
-  \caption{MRSC Statistics}\label{tbl:Stats}
+  \caption{MRSC Statistics\\(Configuration graph sizes)}\label{tbl:Stats}
   \begin{tabular}{l|r|r|r|r}
     \hline
-    Example                 & First & Last & Min. size & Max.size \\ \hline
-    double append           &    12 &   10 &        10 &       19 \\
-    KMP test                &   203 &   39 &        38 &     1055 \\
-    \verb|eqBool| symmetry  &    16 &   17 &        16 &       30 \\
-    exp growth              &    15 &   37 &        15 &       57 \\
+    Example                 & First & Last & Min. size & Max. size \\ \hline
+    double append           &    12 &   10 &        10 &        19 \\
+    KMP test                &   203 &   39 &        38 &      1055 \\
+    \verb|eqBool| symmetry  &    16 &   17 &        16 &        30 \\
+    exp growth              &    15 &   37 &        15 &        57 \\
   \end{tabular}
 \end{table}
 
@@ -752,11 +758,12 @@ apparently based on analyzing the results of different test runs.
 Grechanik et al. \cite{Romanenko2014StagedMRSC} propose a generic framework for building ``big-step''
 multi-result supercompilers, and a way to efficiently extract results satisfying certain criteria.
 Selecting the smallest result is one of the criteria studied.
-Optimization of the result size is not a goal of this work, however.
+Optimization of the result size is not a goal of their work, however.
 The authors have instantiated the framework on a language simulating counter systems, which
 is not Turing-complete, and thus does not demonstrate some of the complications
 coming with Turing-complete object languages.
-This work is most closely related to ours: we re-use the same ideas for implementing
+The work of Grechanik et al. \cite{Romanenko2014StagedMRSC} is most closely related to ours: 
+we re-use the same ideas for implementing
 our multi-result supercompiler, and for efficiently filtering its results by criteria.
 Our main emphasis, however, is on using MRSC together with a generalization strategy, which
 is explicitly tailored towards avoiding code duplication, and hence, optimizing result size.
