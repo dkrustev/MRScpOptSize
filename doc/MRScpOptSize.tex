@@ -95,8 +95,13 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 Supercompilation is often defined as a transformation of ``configurations'' --
 data structures containing information about the original program and the
 current state of its transformation.
-The configurations are typically organized in ``configuration trees/graphs'',
-from which a new ``residual'' program can be generated as a final result.
+The configurations are typically organized in ``configuration trees''.
+Sometimes the current configuration is similar enough to some previous one,
+and we can ``fold'' the former to the latter,
+turning the configuration tree into a ``configuration graph''.
+Finally, we can generate a new ``residual'' program from the configuration
+graph, where folding typically corresponds to the introduction of new
+recursive definitions.
 To ensure termination of the supercompilation process, a check -- usually called 
 a ``whistle'' -- is systematically performed on the sequence of configurations
 being produced.
@@ -122,7 +127,9 @@ generic framework used in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 It offers some important simplifications compared to the original work
 of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \begin{itemize}
-  \item It is based on big-step driving.
+  \item It is based on ``big-step'' driving (called so by analogy with big-step
+    operational semantics, as driving a configuration produces
+    the full configuration sub-tree corresponding to it).
   \item The whole set of transformed programs is represented compactly
     in a tree-like data structure, which further permits not only
     recovering the full set of configuration graphs, but also
@@ -149,6 +156,10 @@ complete set of configuration graphs produced by multi-result supercompilation.
   \item Node \verb|GSFold| is used when folding is possible. 
     It gives the relative distance to the upper node to which we fold, 
     plus the renaming, which makes the folded configurations compatible.
+    Note that, following Grechanik et al. \cite{Romanenko2014StagedMRSC}, we consider
+    only folding to a node on the path from the current node to the root of the tree.
+    Also, similar to other positive supercompilers \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014},
+    it is only possible to fold to a node, which is a renaming of the current one.
   \item Node \verb|GSBuild| is the most complicated one, representing a list
     of alternative developments (driving or generalization) of the current configuration.
     Each alternative, in turn, gives rise to a list of new configurations to explore,
@@ -225,16 +236,18 @@ and a global one -- they mostly follow established heuristics as in S{\o}rensen 
 \cite{Sorensen1994TurchinSupercompiler,sorm98b}.
 The overall approach is simple - if folding is possible, we produce a fold node 
 and stop pursuing the current configuration.
-Otherwise we check the whistle -- in our case, the now standard homeomorphic embedding relation.
+Otherwise we check the whistle -- in our case, the same homeomorphic embedding relation,
+which is used in other positive supercompilers \cite{sorm98b}.
 If it blows, we stop immediately with an empty set of resulting graphs.
 When there is neither folding nor a whistle, we continue analyzing the execution of the
 current configuration -- based on 2 language-specific functions:
 \begin{itemize}
   \item \verb|multiDriveSteps| returns a number of alternatives for the current configuration --
-    either a driving step, or (possibly several different forms of) generalization.
+    either a set of new configurations produced by a single step of driving, 
+    or (possibly several different forms of) generalization.
   \item \verb|mdsrSubExps| returns -- for a given alternative produced by the previous function --
     the list of sub-configurations (in our case -- sub-expressions) that must be subjected
-    to further analyzis.
+    to further analysis.
 \end{itemize}
 The implementation of both functions is described in Sec. \ref{sec:Generalize}.
 Once we have this list of lists of sub-configurations, we simply apply the same
@@ -246,14 +259,13 @@ invited to compare them to the simplicity of this MRSC approach.
 
 \subsection{Programming Language}
 
-The object language we consider is a first-order functional language with ordinary and 
+The object language we consider is a first-order functional language with ordinary (not pattern-matching) and 
 pattern-matching function definitions.
 Its syntax is summarized in Fig. \ref{fig:SLLsyntax}.
-A very similar language is often used in many introductions to positive
+A very similar language -- with call-by-name semantics -- is often used in many introductions to positive
 supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
-We assume the language has a call-by-name semantics, as this case is easiest to supercompile,
-but we skip a more detailed presentation of the semantics of the language, assuming it mostly obvious.
+The patterns of any function definition must be exhaustive, not nested, and non-overlapping.
 As a technical detail, we do not make a distinction between ordinary and pattern-matching functions
 at each call site, as this information is uniquely determined by the function definition itself.
 
@@ -279,7 +291,8 @@ $P$ & ::= & $d_1, \ldots, d_n$ & program
 
 \subsection{Driving}
 
-Let us recall what driving looks like for this simple language, in the case of standard (positive) supercompilation.
+Let us recall what driving looks like for this simple language, in the case of positive supercompilation
+(which is a simplification of the more general approach pioneered by Turchin \cite{TurchinSupercompilerConcept}).
 As a technical device, we define a single step of driving, producing a
 result of type \verb|DriveStepResult|, as defined in Fig. \ref{fig:DriveStepResult}
 
@@ -324,6 +337,8 @@ We deliberately omit many low-level details in this description, as they are wel
 in most introductions to positive supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 Using this definition of driving, plus the usual definitions of folding, whistle, and generalization, 
 we can build configuration graphs of the form shown in Fig. \ref{fig:ConfGraph}.
+Note that we use the same representation for object and meta-variables,
+as no confusions arise (asuming suitable measures for avoiding variable capture).
 
 \begin{figure}
 \begin{lstlisting}
@@ -356,9 +371,11 @@ for optimization.
 But this is not always the case.
 These observations lead us to consider two guiding principles that should help us attain our goal:
 \begin{itemize}
-  \item if standard driving can produce code duplication, provide also a generalized
-    configuration, where no (non-trivial) sub-expressions are duplicated;
-  \item if there is no risk of code duplication, avoid any generalization, as it will
+  \item if standard driving can duplicate existing code, provide also a generalized
+    configuration, where no existing (non-trivial) sub-expressions are duplicated\footnote{
+    We do not attempt to remove already existing code duplication, 
+    only to avoid introducing new duplication.};
+  \item if there is no risk of duplicating code, avoid any generalization, as it will
     be unlikely to help with the size of the result.
 \end{itemize}
 To apply these principles, we analyze standard driving, case by case, to see where
@@ -393,25 +410,25 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
   \item The variable case is again trivial: \\
     $\mathtt{mrdrive} \llbracket x \rrbracket = [\mathtt{MDSRLeaf}(x)]$;
     (We use $[\ldots; \ldots; \ldots]$ to denote a list of results.)
-  \item There is no code duplication when driving a constructor, so we again make no generalization: 
+  \item driving a constructor does not duplicate code, so we again make no generalization: \\ 
     $\mathtt{mrdrive} \llbracket C(e_1, \ldots, e_n) \rrbracket = [\mathtt{MDSRCon}(C, e_1, \ldots, e_n)]$;
   \item The unfolding of a call to an ordinary function can produce code duplication, if some arguments appear
     multiple times in the body of the definition. 
-    We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work}: \\
+    We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work.}: \\
     $\mathtt{mrdrive} \llbracket f(e_1, \ldots, e_n) \rrbracket =$ 
       $[\mathtt{MDSRLet}(y_1=e_1, \ldots, y_n=e_n, e [ x_1\rightarrow y_1, \ldots, x_n\rightarrow y_n ]); $ \\
       $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])]$,
     where $y_1, \ldots, y_n$ are fresh and $f(x_1, \ldots, x_n) = e \in P$.
     Notice that we shall always place the generalization result before the driving result in the list.
-    In this way, supercompiled programs produced earlier will have more generalizations;
+    In this way, when we expand the lazy graph using \verb|gset2graphs|, configuration graphs
+    earlier in the resulting sequence will have more generalizations;
   \item The case of a pattern-matching call with a known constructor is completely
     analogous to the previous one: \\
     $\mathtt{mrdrive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket = [$
     $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$ 
     $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])]$
     where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
-  \item When we pattern-match on a variable, there can be some code duplication during
-    information propagation. 
+  \item When we pattern-match on a variable, information propagation can introduce some code duplication. 
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
     We have currently decided to accept this limited form of potential duplication, without adding a generalization: \\
     $\mathtt{mrdrive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
@@ -419,7 +436,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))]$
     where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$;
   \item The case of matching on a function call is perhaps the least obvious. 
-    As during normal driving we reuse the result of driving the nested call, it is not statically clear what
+    As during normal driving we reuse the result of driving the nested call, it is not clear in advance what
     it will be.
     So we prefer to be conservative, and add a full generalization of the outer call here: \\
     $\mathtt{mrdrive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
@@ -622,8 +639,9 @@ Several interesting observations stem from analyzing the selected resulting prog
     As residualization performs some optimizations (removing trivial lets, removing duplicated
     function definitions, etc.), the relation between graph size and resulting program size
     is not always a monotone function.
-    On the other hand, it would be difficult to find the minimum-size \emph{program}
-    without actually enumerating all such programs, which can be impractical in general.
+    On the other hand, it would be difficult to find the \emph{program} of minimum size
+    in the set of all residual programs
+    without actually enumerating all of them, which can be impractical in general.
     A possible compromise is to study better size measures for configuration graphs, instead
     of the simple node count we currently use.
     For example, ignoring unfolding nodes when calculating size can give a better idea for the expected size
