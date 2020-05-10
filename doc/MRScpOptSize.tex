@@ -14,8 +14,12 @@
   %	keywordstyle=\bfseries
 }
 
+\usepackage{amssymb}
 \usepackage{stmaryrd} % for \{ll,rr}bracket	
 \usepackage{caption,subcaption}
+
+\usepackage{algpseudocode}      % layout for algorithmicx
+\usepackage{algorithm}          % float wrapper for algorithms
 
 \usepackage{randtext}
 \newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
@@ -194,43 +198,75 @@ of configuration graphs.
 Note the use of \verb|Seq.cartesian| to compose the sub-graphs of 
 the graph node of each alternative configuration.
 
-\begin{figure}
-\begin{lstlisting}
-type private HistEntryKind = HEGlobal | HELocal
+%\begin{figure}
+%\begin{lstlisting}
+%type private HistEntryKind = HEGlobal | HELocal
+%
+%let rec private mrScpRec (defs: Defs) (nestLvl: int) (hist: 
+%  list<HistEntryKind * int * Exp>) (conf: MConf) : GraphSet =
+%  let (_, e) = conf
+%  let relevantHist hek hist =
+%    match hek with
+%    | HELocal -> hist |> List.takeWhile (fun (hek, _, _) -> hek = HELocal)
+%    | HEGlobal -> hist |> List.filter (fun (hek, _, _) -> hek = HEGlobal)
+%  match List.tryFindSome (fun (_, _, e1) -> renaming e1 e) hist with
+%    | Some ((_, lvl, _), ren) -> GSFold(conf, nestLvl - lvl, ren)
+%    | None ->
+%      let rs = multiDriveSteps defs e
+%      let hek = if List.tryFind (fun mdsr -> 
+%                  match mdsr with MDSRCases _ -> true | _ -> false) rs = None
+%                then HELocal else HEGlobal
+%      let relHist = relevantHist hek hist
+%      match List.tryFind (fun (_, _, e1) -> homeomorphicEmbedding e1 e) relHist with
+%      | Some _ -> GSNone
+%      | None ->
+%        let confss = rs |> List.map (fun mdsr -> 
+%          mdsrSubExps mdsr |> List.map (fun e -> (mdsr, e)))
+%        let newHist = (hek, nestLvl, e)::hist
+%        GSBuild(conf, 
+%          List.map (List.map (mrScpRec defs (nestLvl + 1) newHist)) confss)
+%
+%let mrScp (defs: Defs) (e: Exp) : GraphSet =
+%  mrScpRec defs 0 [] (MDSRUnfold e, e)
+%\end{lstlisting}
+%\caption{Main MRSC Algorithm}
+%\label{fig:MRSCAlg}
+%\end{figure}
 
-let rec private mrScpRec (defs: Defs) (nestLvl: int) (hist: 
-  list<HistEntryKind * int * Exp>) (conf: MConf) : GraphSet =
-  let (_, e) = conf
-  let relevantHist hek hist =
-    match hek with
-    | HELocal -> hist |> List.takeWhile (fun (hek, _, _) -> hek = HELocal)
-    | HEGlobal -> hist |> List.filter (fun (hek, _, _) -> hek = HEGlobal)
-  match List.tryFindSome (fun (_, _, e1) -> renaming e1 e) hist with
-    | Some ((_, lvl, _), ren) -> GSFold(conf, nestLvl - lvl, ren)
-    | None ->
-      let rs = multiDriveSteps defs e
-      let hek = if List.tryFind (fun mdsr -> 
-                  match mdsr with MDSRCases _ -> true | _ -> false) rs = None
-                then HELocal else HEGlobal
-      let relHist = relevantHist hek hist
-      match List.tryFind (fun (_, _, e1) -> homeomorphicEmbedding e1 e) relHist with
-      | Some _ -> GSNone
-      | None ->
-        let confss = rs |> List.map (fun mdsr -> 
-          mdsrSubExps mdsr |> List.map (fun e -> (mdsr, e)))
-        let newHist = (hek, nestLvl, e)::hist
-        GSBuild(conf, 
-          List.map (List.map (mrScpRec defs (nestLvl + 1) newHist)) confss)
-
-let mrScp (defs: Defs) (e: Exp) : GraphSet =
-  mrScpRec defs 0 [] (MDSRUnfold e, e)
-\end{lstlisting}
-\caption{Main MRSC Algorithm}
-\label{fig:MRSCAlg}
-\end{figure}
+\begin{algorithm}[H]
+  \caption{Main MRSC Algorithm}
+  \label{alg:MRSCAlg}
+  \begin{algorithmic}[1]
+    \Function{mrScpRec}{$p, l, h, c$}
+      \If{$\exists (\_, l', c') \in h, \rho \textrm{ -- renaming} : c = \textit{rename}(c', \rho)$}
+        \State \Return{$\mathtt{GSFold}(c, l - l', \rho)$}
+      \Else
+        \State $\mathit{rs} \gets \mathtt{multiDriveSteps}(p, c)$
+        \If{$\exists (\mathtt{MDSRCases} \_) \in \mathit{rs}$}
+          \State $\mathit{hk} \gets \mathtt{HEGlobal}$
+          \State $\mathit{relHist} \gets [ (\mathit{hk}', l, c) | \mathit{hk}' = \mathtt{HEGlobal} ]$
+        \Else
+          \State $\mathit{hk} \gets \mathtt{HELocal}$
+          \State $\mathit{relHist} \gets \mathit{takeWhile}(\lambda (\mathit{hk}', l, c) . \mathit{hk}' = \mathtt{HELocal}, h)$
+        \EndIf
+        \If{$\exists (\_, \_, c') \in \mathit{relHist} : c' \trianglelefteq c$} 
+          \Comment{$\trianglelefteq$ denotes \emph{homeomorphic embedding}}
+          \State \Return{$\mathtt{GSNone}$}
+        \Else
+          \State $\mathit{css} \gets \mathit{map}(\mathtt{mdsrSubExps}, \mathit{rs})$
+          \State $h' \gets (\mathit{hk}, l, c)::h$
+          \State \Return $\mathtt{GSBuild}(c, \mathit{map}(\lambda \mathit{cs} . \mathit{map}(\lambda c . \Call{mrScpRec}{p, l+1, h', c}, \mathit{cs}) , css))$
+        \EndIf
+      \EndIf
+    \EndFunction
+    \Function{mrScp}{$p, c$}
+      \State \Return $\Call{mrScpRec}{p, 0, [], c}$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 
 The main MRSC algorithm -- the one that builds the graph set of a given initial
-configuration -- is shown in Fig. \ref{fig:MRSCAlg}.
+configuration -- is presented with some simplifications as Algorithm \ref{alg:MRSCAlg}.
 We can ignore the details about splitting the configuration history into a local
 and a global one -- they mostly follow established heuristics as in S{\o}rensen et al. 
 \cite{Sorensen1994TurchinSupercompiler,sorm98b}.
