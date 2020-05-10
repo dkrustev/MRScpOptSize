@@ -47,7 +47,7 @@ applications, such as program optimization\cite{Sorensen1994TurchinSupercompiler
 program analysis, software testing, formal verification \cite{Klyuchnikov2010,Lisitsa2017,MendelGleasonPhD2011}.
 It is closely related to partial evaluation \cite{Jones:1993:PEA:153676} and deforestation.
 Different extensions of the basic supercompilation approach are also studied, aiming to further increase
-its power -- for example, distillation \cite{Hamilton07}, higher-level supercompilation \cite{Klyuchnikov:META2010:HigherLevelScp}, etc.
+its power -- for example, distillation \cite{10.1145/1244381.1244391}, higher-level supercompilation \cite{Klyuchnikov:META2010:HigherLevelScp}, etc.
 
 Supercompilation performs very powerful program transformations by simulating
 the actual execution of the input program on a whole set of possible inputs
@@ -64,7 +64,7 @@ empirically fine-tuned heuristics.
 The main goal of the present study is to experiment with a more
 principled approach to optimizing the size of the program resulting
 from supercompilation.
-This approach is based on a few of key ideas:
+This approach is based on a few key ideas:
 \begin{itemize}
   \item use multi-result supercompilation\footnote{often abbreviated as \emph{MRSC} from now on} 
     \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC,Romanenko2014StagedMRSC}
@@ -108,7 +108,7 @@ of the multiple resulting programs.
 
 Our implementation of multi-result supercompilation mostly follows the same
 generic framework used in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
-It offers some important simplifications compared by the original work
+It offers some important simplifications compared to the original work
 of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \begin{itemize}
   \item It is based on big-step driving.
@@ -123,6 +123,9 @@ We use direct excerpts of the F\# code of the implementation\footnote{Available 
 they will be readable by anyone familiar with other functional languages such as OCaml or Haskell.
 Another important caveat is that we have implemented MRSC for programs in a specific language,
 so some details will only become clear once we introduce this language.
+In particular, the supercompilation configurations (\verb|MConf|) we use are 
+a pair of a multi-result driving step output and an expression of the language,
+as described in Sec. \ref{sec:MRDriving}.
 Still, the details of the language are not important for understanding the core
 MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 We prefer to show excerpts from our actual implementation for concreteness.
@@ -143,6 +146,8 @@ complete set of configuration graphs produced by multi-result supercompilation.
 
 \begin{figure}
 \begin{lstlisting}
+type MConf = MultiDriveStepResult * Exp
+
 type GraphSet =
   | GSNone
   | GSFold of MConf * int * list<VarName * VarName>
@@ -238,6 +243,8 @@ supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
 We assume the language has a call-by-name semantics, as this case is easiest to supercompile,
 but we skip a more detailed presentation of the semantics of the language, assuming it mostly obvious.
+As a technical detail, we do not make a distinction between ordinary and pattern-matching functions
+at each call site, as this information is uniquely determined by the function definition itself.
 
 \begin{figure}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
@@ -261,7 +268,7 @@ $P$ & ::= & $d_1, \ldots, d_n$ & program
 
 \subsection{Driving}
 
-Let us recall how driving looks like for this simple language, in the case of standard (positive) supercompilation.
+Let us recall what driving looks like for this simple language, in the case of standard (positive) supercompilation.
 As a technical device, we define a single step of driving, producing a
 result of type \verb|DriveStepResult|, as defined in Fig. \ref{fig:DriveStepResult}
 
@@ -321,7 +328,7 @@ type ConfGraph =
 \label{fig:ConfGraph}
 \end{figure}
 
-\subsection{Multi-result Driving And Generalization}
+\subsection{Multi-result Driving And Generalization}\label{sec:MRDriving}
 
 As already mentioned, a key difference in multi-result supercompilation is
 that driving and generalization are grouped together: a \emph{multi-driving}
@@ -331,12 +338,12 @@ can be different kinds of generalizations.
 The choice of generalization strategy depends on the intended use of the
 multi-result supercompiler.
 In our case, the main goal is to find a program of optimal size among the results.
-Previous analyzes have shown that one of the main reasons for code size explosion in
+Previous analyses have shown that one of the main reasons for code size explosion in
 supercompilation is the unrestricted duplication of sub-expressions during driving.
 Of course, sometimes such duplication pays off, as it leads to new opportunities 
 for optimization.
 But this is not always the case.
-These observations hint us to consider two guiding principles that should helps us attain our goal:
+These observations lead us to consider two guiding principles that should help us attain our goal:
 \begin{itemize}
   \item if standard driving can produce code duplication, provide also a generalized
     configuration, where no (non-trivial) sub-expressions are duplicated;
@@ -443,7 +450,7 @@ A straightforward approach, which works for some of the smaller examples,
 is to enumerate all resulting configuration graphs and gather statistics from them.
 For one example -- the well-known ``KMP test'' -- this approach turned out to be too
 time consuming.
-So, to make possible to analyze larger examples, we adapted the approach 
+So, to make it possible to analyze larger examples, we adapted the approach 
 of Grechanik et al. \cite{Romanenko2014StagedMRSC}, which permits to filter
 the sequence of configuration graphs produced by MRSC, without explicitly
 enumerating them.
@@ -590,7 +597,7 @@ Several interesting observations stem from analyzing the selected resulting prog
     symmetry of Boolean equality -- Fig. \ref{fig:BoolEqSymResult}.
   \item The results of ``exp growth'' are especially interesting in view of our main goal.
     The last result is the same as produced by S{\o}rensen's supercompiler --
-    \verb|B(B(B(z, z), B(z, z)), B(B(z, z),| \verb|B(z, z)))| -- clearly suffering form code-size explosion.
+    \verb|B(B(B(z, z), B(z, z)), B(B(z, z),| \verb|B(z, z)))| -- clearly suffering from code-size explosion.
     The minimum-size (and also first) program -- shown in Fig. \ref{fig:ExpGrowthMinResult} --
     avoids the pitfall of code-size explosion, thanks to generalization.
     It, however, has also missed some opportunities for static evaluation.
@@ -740,7 +747,7 @@ are encouraging:
 \begin{itemize}
   \item the smallest configuration graphs we produce are always of small size, comparable
     to the size of the input, and typically much smaller than the largest results;
-  \item often the results of small size (though not necessarily the smallest) also feature 
+  \item often the results of small size (though not necessarily the smallest) also feature a
     significant amount of optimizations, comparable to what a standard classical supercompiler
     can achieve on the same task.
 \end{itemize}
