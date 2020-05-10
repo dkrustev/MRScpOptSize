@@ -71,8 +71,8 @@ This approach is based on a few key ideas:
     to systematically explore a large set of different generalizations during 
     the transformation process, 
     leading to different trade-offs between performed optimizations and code explosion;
-  \item carefully select a generalization scheme, which can avoid all forms of
-    code duplication if applied systematically;
+  \item carefully select a generalization scheme, which can -- if applied systematically -- avoid all forms of
+    code duplication introduced by the supercompilation process itself;
   \item re-use ideas from Grechanik et al. \cite{Romanenko2014StagedMRSC} to compactly represent and efficiently
     explore the set of programs resulting from multi-result supercompilation.
 \end{itemize}
@@ -92,11 +92,22 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 
 \section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
 
-Most supercompilers perform generalization of the current configuration only
-when forced to do so by the whistle.
-The only subtlety, as suggested by S{\o}rensen et al. \cite{sorm98b} is to select
-whether to generalize the lower or the upper configuration of the two that
-have caused the whistle to blow.
+Supercompilation is often defined as a transformation of ``configurations'' --
+data structures containing information about the original program and the
+current state of its transformation.
+The configurations are typically organized in ``configuration trees/graphs'',
+from which a new ``residual'' program can be generated as a final result.
+To ensure termination of the supercompilation process, a check -- usually called 
+a ``whistle'' -- is systematically performed on the sequence of configurations
+being produced.
+When this whistle signals a potential risk of non-termination, one possibility
+to continue the supercompilation process is to perform a ``generalization'' --
+replace the current configuration by another, which avoids the non-termination
+risk, possibly by forgetting some information.
+The whistle usually marks the current configuration (``lower'' in the tree) as risking
+non-termination with respect to some other configuration produced earlier (``higher'' in the tree).
+Traditional supercompilers -- as described, for example, by S{\o}rensen et al. \cite{sorm98b} --
+make a choice whether to generalize the ``lower'' or the ``upper'' configuration.
 One of the key insights behind multi-result supercompilation is that the place
 where the whistle has blown is not always the best place to make a generalization.
 The proposed solution is radical: do not generalize when the whistle has blown,
