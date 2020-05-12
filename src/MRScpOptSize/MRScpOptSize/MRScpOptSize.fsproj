@@ -58,6 +58,7 @@
     <Compile Include="Residualize.fs" />
     <Compile Include="Parsec.fs" />
     <Compile Include="ExpParser.fs" />
+    <Compile Include="VisualizeGraphs.fs" />
     <Compile Include="Examples.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />

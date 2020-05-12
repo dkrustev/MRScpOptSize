@@ -2,6 +2,7 @@
 
 open ExpParser
 open ConfGraphs
+open VisualizeGraphs
 
 let stdScp defs e =
     let g = StdScp.buildGraph defs e
@@ -34,6 +35,7 @@ let mrScpDump dumpAllGraphs path name defs e =
 
     let gs = MRScp.mrScp defs e
     System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_GraphSet.txt" name), sprintf "%A" gs)
+    System.IO.File.WriteAllLines(System.IO.Path.Combine(path, sprintf "%s_GraphSet.dot" name), gset2dot gs)
 
     let (minSize, gsMin) = MRScp.GraphSetOps.minMaxSizeGraph (<=) gs
     dumpSelected "Min" (sprintf "minSize: %i\n" minSize) gsMin

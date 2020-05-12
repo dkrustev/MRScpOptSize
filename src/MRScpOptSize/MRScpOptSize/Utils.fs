@@ -33,3 +33,5 @@ module Seq =
         items |> Seq.fold (fun acc s ->
             seq { for x in acc do for y in s do yield x @ [y] }) (Seq.singleton [])
 
+module String =
+    let escape s = String.collect(function '\r'->"\\r"|'\n'->"\\n"|'\t'->"\\t"|'"'->"\\\""|c->string c) s
