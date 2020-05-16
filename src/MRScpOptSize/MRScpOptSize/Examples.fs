@@ -106,5 +106,6 @@ f(w) = B(w, w);
 """
 let expGrowthDef = ExpParser.str2defs expGrowthDefStr
 let expGrowthExample = ExpParser.str2exp "g(Cons(A, Cons(A, Cons(A, Nil))), z)"
+let expGrowthSmallExample = ExpParser.str2exp "g(Cons(A, Nil), z)"
 
 
