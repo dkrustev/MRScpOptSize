@@ -75,8 +75,8 @@ This approach is based on a few key ideas:
     to systematically explore a large set of different generalizations during 
     the transformation process, 
     leading to different trade-offs between performed optimizations and code explosion;
-  \item carefully select a generalization scheme, which can -- if applied systematically -- avoid all forms of
-    code duplication introduced by the supercompilation process itself;
+  \item carefully select a generalization scheme, which can -- if applied systematically -- avoid duplicating
+    code during the supercompilation process itself;
   \item re-use ideas from Grechanik et al. \cite{Romanenko2014StagedMRSC} to compactly represent and efficiently
     explore the set of programs resulting from multi-result supercompilation.
 \end{itemize}
@@ -99,7 +99,8 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 Supercompilation is often defined as a transformation of ``configurations'' --
 data structures containing information about the original program and the
 current state of its transformation.
-The configurations are typically organized in ``configuration trees''.
+The configurations are typically produced by a process called ``driving'',
+and organized in ``configuration trees''.
 Sometimes the current configuration is similar enough to some previous one,
 and we can ``fold'' the former to the latter,
 turning the configuration tree into a ``configuration graph''.
@@ -374,7 +375,7 @@ We deliberately omit many low-level details in this description, as they are wel
 in most introductions to positive supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 Using this definition of driving, plus the usual definitions of folding, whistle, and generalization, 
 we can build configuration graphs of the form shown in Fig. \ref{fig:ConfGraph}.
-Note that we use the same representation for object and meta-variables,
+Note that we use the same representation of variables inside object-language programs and inside configuration graphs,
 as no confusions arise (asuming suitable measures for avoiding variable capture).
 
 \begin{figure}
@@ -532,7 +533,7 @@ the other 2 are similar.
 By comparing the first to the smallest and the largest graph we can see how 
 successful is the proposed generalization strategy in controlling code size.
 By comparing the first to the last graph, we can see the impact of different choices
-(avoiding to duplicate code vs. permitting it to hopefully have more optimization opportunities later)
+(avoiding to duplicate code vs. permitting it in order to hopefully have more optimization opportunities later)
 in different example programs.
 
 \begin{figure*}
