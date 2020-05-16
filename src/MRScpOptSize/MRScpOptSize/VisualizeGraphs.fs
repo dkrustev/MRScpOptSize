@@ -4,7 +4,7 @@ open Utils
 open MultiDrive
 open MRScp
 
-let gset2dot (gs: GraphSet) : list<string> =
+let gset2dot (onlyFirstAlt: bool) (gs: GraphSet) : list<string> =
     let mutable nodeCount = 0
     let newNodeName prefix =
         nodeCount <- nodeCount + 1
@@ -22,7 +22,7 @@ let gset2dot (gs: GraphSet) : list<string> =
                 //sprintf "%A" mdsr
             | _ -> ""
         sprintf "%s%A" prefix e
-    let rec loop nodeNames index gs = 
+    let rec loop nodeNames altNumber index gs = 
         match gs with
         | GSNone -> [sprintf "%s [label = \"GSNone\"]" (List.head nodeNames)]
         | GSFold (conf, n, ren) -> 
@@ -45,7 +45,11 @@ let gset2dot (gs: GraphSet) : list<string> =
                             let field' = sprintf "<%s>" field
                             let subnodeName = newNodeName "node"
                             let edge = sprintf "%s:%s -> %s" nodeName field subnodeName
-                            (edge :: loop (subnodeName::nodeNames) j gs @ dot, field'::subsubfields)
+                            let subDot = 
+                                if not onlyFirstAlt || altNumber = 0
+                                then loop (subnodeName::nodeNames) i j gs
+                                else [sprintf "%s [label = \"...\"]" subnodeName]
+                            (edge :: subDot @ dot, field'::subsubfields)
                             )
                             gss
                     let subfield = sprintf "{ alt. %d | {%s}}" (i+1) (String.concat " |" subsubfields)
@@ -54,6 +58,6 @@ let gset2dot (gs: GraphSet) : list<string> =
             let conf' = showConf index conf |> String.escape
             let node = sprintf "%s [label = \"{GSBuild (%s) | {%s}}\"]" nodeName conf' (String.concat " | " subfields)
             node :: dot
-    let dot = loop [newNodeName "node"] 0 gs
+    let dot = loop [newNodeName "node"] 0 0 gs
     "digraph MRSCGraphSet {" :: "node [shape=record];" :: dot @ ["}"]
 

@@ -35,7 +35,8 @@ let mrScpDump dumpAllGraphs path name defs e =
 
     let gs = MRScp.mrScp defs e
     System.IO.File.WriteAllText(System.IO.Path.Combine(path, sprintf "%s_GraphSet.txt" name), sprintf "%A" gs)
-    System.IO.File.WriteAllLines(System.IO.Path.Combine(path, sprintf "%s_GraphSet.dot" name), gset2dot gs)
+    System.IO.File.WriteAllLines(System.IO.Path.Combine(path, sprintf "%s_GraphSet.dot" name), gset2dot false gs)
+    System.IO.File.WriteAllLines(System.IO.Path.Combine(path, sprintf "%s_GraphSetPartial.dot" name), gset2dot true gs)
 
     let (minSize, gsMin) = MRScp.GraphSetOps.minMaxSizeGraph (<=) gs
     dumpSelected "Min" (sprintf "minSize: %i\n" minSize) gsMin
