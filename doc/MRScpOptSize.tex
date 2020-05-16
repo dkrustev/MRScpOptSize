@@ -1,3 +1,4 @@
+
 \documentclass[submission,copyright,creativecommons]{eptcs}
 \providecommand{\event}{VPT 2020} % Name of the event you are submitting to
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
@@ -20,6 +21,8 @@
 
 \usepackage{algpseudocode}      % layout for algorithmicx
 \usepackage{algorithm}          % float wrapper for algorithms
+
+\usepackage[inline]{enumitem}
 
 \usepackage{randtext}
 \newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
@@ -162,7 +165,11 @@ complete set of configuration graphs produced by multi-result supercompilation.
     It gives the relative distance to the upper node to which we fold, 
     plus the renaming, which makes the folded configurations compatible.
     Note that, following Grechanik et al. \cite{Romanenko2014StagedMRSC}, we consider
-    only folding to a node on the path from the current node to the root of the tree.
+    only folding to a node on the path from the current node to the root of the graph.
+    The main reason to avoid folding to other nodes in the graph -- as some other
+    supercompilers do -- is that our lazy graph is a compact representation of
+    a whole set of configuration graphs, and permitting cross edges 
+    would complicate a lot the semantics of the lazy graph.
     Also, similar to other positive supercompilers \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014},
     it is only possible to fold to a node, which is a renaming of the current one.
   \item Node \verb|GSBuild| is the most complicated one, representing a list
@@ -239,6 +246,8 @@ the graph node of each alternative configuration.
   \label{alg:MRSCAlg}
   \begin{algorithmic}[1]
     \Function{mrScpRec}{$p, l, h, c$}
+      \Comment{$p$ -- program (function definitions); $l$ -- nesting level; }
+      \State \Comment{$h$ -- history (list of tuples: local/global flag; level; configuration); $c$ -- configuration}
       \If{$\exists (\_, l', c') \in h, \rho \textrm{ -- renaming} : c = \textit{rename}(c', \rho)$}
         \State \Return{$\mathtt{GSFold}(c, l - l', \rho)$}
       \Else
@@ -536,6 +545,35 @@ By comparing the first to the last graph, we can see the impact of different cho
 (avoiding to duplicate code vs. permitting it in order to hopefully have more optimization opportunities later)
 in different example programs.
 
+After we extract a single configuration graph out of the lazy graph, we can further
+produce a new program in the object language from this graph.
+This residualization process involves 2 main steps:
+  \begin{enumerate*}[label=\itshape\arabic*\upshape)]
+    \item Extract a program in a language extended with case and let expressions from the configuration graph.
+      This step also creates recursive function definitions from fold nodes.
+    \item Remove let and case expressions (by a method similar to lambda lifting) to
+      obtain a program in the original object language.
+  \end{enumerate*}
+The residualization process also includes several optimizations:
+  \begin{enumerate*}[label=\itshape\alph*\upshape)]
+    \item removing ``trivial'' let expressions (expressions of the form \verb|let x = y in ...|, or where the variable is
+      only used once);
+    \item removing duplicated function definitions (a limited form of common subexpression elimination).
+  \end{enumerate*}
+The results shown in Fig. \ref{fig:DoubleAppResult}-\ref{fig:ExpGrowthOptResult} are all produced by applying
+this residualization process on the given configuration graph.
+Note, however, that we have decided to compare the sizes of the configuration graphs, and not of the residualized
+programs, for a couple of reasons:
+\begin{itemize}
+  \item The size of the resulting program depends not only on the optimizations performed by supercompilation proper
+    (which are refelected directly in the configuration graph), but also on the additional optimizations performed
+    during residualization.
+    The latter are standard optimizations that can be performed on any program, no matter if it is produced
+    by supercompilation or written by hand.
+  \item As already mentioned, we have efficient methods to extract a configuration graph of optimum size from the lazy graph.
+    We have no way to do the same with respect to the size of the residual program.
+\end{itemize}
+
 \begin{figure*}
 \begin{subfigure}[b]{\linewidth}
 \begin{lstlisting}[language=Prolog]
@@ -677,14 +715,14 @@ Several interesting observations stem from analyzing the selected resulting prog
     while avoiding the risk of code explosion -- Fig. \ref{fig:ExpGrowthOptResult}.
     Apparently, we need a more refined approach for looking for (close to) minimum-size programs, 
     if we do not want to miss such results.
-    One explanation of this discrepancy is that we compare configuration graph sizes, and not
+    One explanation of this discrepancy is that -- as already explained -- we compare configuration graph sizes, and not
     the sizes of the programs produced by residualizing these graphs.
-    As residualization performs some optimizations (removing trivial lets, removing duplicated
-    function definitions, etc.), the relation between graph size and resulting program size
-    is not always a monotone function.
-    On the other hand, it would be difficult to find the \emph{program} of minimum size
-    in the set of all residual programs
-    without actually enumerating all of them, which can be impractical in general.
+%    As residualization performs some optimizations (removing trivial lets, removing duplicated
+%    function definitions, etc.), the relation between graph size and resulting program size
+%    is not always a monotone function.
+%    On the other hand, it would be difficult to find the \emph{program} of minimum size
+%    in the set of all residual programs
+%    without actually enumerating all of them, which can be impractical in general.
     A possible compromise is to study better size measures for configuration graphs, instead
     of the simple node count we currently use.
     For example, ignoring unfolding nodes when calculating size can give a better idea for the expected size
