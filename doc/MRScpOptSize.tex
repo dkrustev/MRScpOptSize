@@ -316,21 +316,50 @@ As a technical detail, we do not make a distinction between ordinary and pattern
 at each call site, as this information is uniquely determined by the function definition itself.
 
 \begin{figure}
+\begin{minipage}{0.4\textwidth}
+\emph{Expressions}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
-$e$ & ::= && expression   \\
-    && $x$ & variable     \\
-    && $a(e_1,\ldots,e_n)$ & call \\
-$a$ & ::= && call kind    \\
-    && $C$ & constructor  \\
-    && $f$ & function     \\
-$p$ & ::= & $C(x_1, $\ldots$, x_n)$ & pattern \\
-$d$ & ::= && function definition \\
-    &         & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
-    & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching function \\
-    &         & $\ldots$ & \\
-    &         & $g(p_n, y_1, \ldots, y_m) = e_n$ & \\
-$P$ & ::= & $d_1, \ldots, d_n$ & program
+  $e$ & ::= & $x$ & variable     \\
+  & $\vert$ & $a(e_1,\ldots,e_n)$ & call 
 \end{tabular}
+\flushleft{\emph{Call kinds}}
+\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+  $a$ & ::= & $C$ & constructor  \\
+  & $\vert$ & $f$ & function     
+\end{tabular}
+\emph{Patterns}
+\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+  $p$ & ::= & $C(x_1, $\ldots$, x_n)$ & 
+\end{tabular}
+\end{minipage}%
+\begin{minipage}{0.4\textwidth}
+\flushleft{\emph{Function definitions}}
+\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+  $d$ & ::=     & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
+      & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching function \\
+      &         & $\ldots$ & \\
+      &         & $g(p_n, y_1, \ldots, y_m) = e_n$ & 
+\end{tabular}
+\flushleft{\emph{Programs}}
+\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+  $P$ & ::= & $d_1, \ldots, d_n$ & 
+\end{tabular}
+\end{minipage}
+%\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
+%$e$ & ::= && expression   \\
+%    && $x$ & variable     \\
+%    && $a(e_1,\ldots,e_n)$ & call \\
+%$a$ & ::= && call kind    \\
+%    && $C$ & constructor  \\
+%    && $f$ & function     \\
+%$p$ & ::= & $C(x_1, $\ldots$, x_n)$ & pattern \\
+%$d$ & ::= && function definition \\
+%    &         & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
+%    & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching function \\
+%    &         & $\ldots$ & \\
+%    &         & $g(p_n, y_1, \ldots, y_m) = e_n$ & \\
+%$P$ & ::= & $d_1, \ldots, d_n$ & program
+%\end{tabular}
 \caption{Object Language Syntax}
 \label{fig:SLLsyntax}
 \end{figure}
