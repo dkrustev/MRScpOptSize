@@ -139,7 +139,7 @@ of Klyuchnikov et al. \cite{KlyuchnikovMRSCBranch,Klyuchnikov:META2012:MRSC}:
 \begin{itemize}
   \item It is based on ``big-step'' driving (called so by analogy with big-step
     operational semantics, as driving a configuration produces
-    the full configuration sub-tree corresponding to it).
+    the full configuration subtree corresponding to it).
   \item The whole set of transformed programs is represented compactly
     in a tree-like data structure, which further permits not only
     recovering the full set of configuration graphs, but also
@@ -203,7 +203,7 @@ let rec gset2graphs (gs: GraphSet) : seq<MConf * ConfGraph> =
 The semantics of this DSL is shown in the same Fig. \ref{fig:GraphSet} as
 a function \verb|gset2graphs| expanding a \verb|GraphSet| into a sequence 
 of configuration graphs.
-Note the use of \verb|Seq.cartesian| to compose the sub-graphs of 
+Note the use of \verb|Seq.cartesian| to compose the subgraphs of 
 the graph node of each alternative configuration.
 
 %\begin{figure}
@@ -292,7 +292,7 @@ current configuration -- based on 2 language-specific functions:
     either a set of new configurations produced by a single step of driving, 
     or (possibly several different forms of) generalization.
   \item \verb|mdsrSubExps| returns -- for a given alternative produced by the previous function --
-    the list of sub-configurations (in our case -- sub-expressions) that must be subjected
+    the list of sub-configurations (in our case -- subexpressions) that must be subjected
     to further analysis.
 \end{itemize}
 The implementation of both functions is described in Sec. \ref{sec:Generalize}.
@@ -412,14 +412,14 @@ The choice of generalization strategy depends on the intended use of the
 multi-result supercompiler.
 In our case, the main goal is to find a program of optimal size among the results.
 Previous analyses have shown that one of the main reasons for code size explosion in
-supercompilation is the unrestricted duplication of sub-expressions during driving.
+supercompilation is the unrestricted duplication of subexpressions during driving.
 Of course, sometimes such duplication pays off, as it leads to new opportunities 
 for optimization.
 But this is not always the case.
 These observations lead us to consider two guiding principles that should help us attain our goal:
 \begin{itemize}
   \item if standard driving can duplicate existing code, provide also a generalized
-    configuration, where no existing (non-trivial) sub-expressions are duplicated\footnote{
+    configuration, where no existing (non-trivial) subexpressions are duplicated\footnote{
     We do not attempt to remove already existing code duplication, 
     only to avoid introducing new duplication.};
   \item if there is no risk of duplicating code, avoid any generalization, as it will
@@ -532,7 +532,7 @@ The full lazy graph for the same example is shown in Appendix \ref{app:ExpGrowth
 \begin{itemize}
   \item Multi-result driving produces 2 alternatives from the initial expression \verb|g(Cons(A, Nil), z)|:
     \verb|let x0 = A; xs0 = Nil; y0 = z in f(g(xs0, y0))| and \verb|f(g(Nil, z))|.
-    As mentioned, we further consider only the sub-graph for the first alternative, which
+    As mentioned, we further consider only the subgraph for the first alternative, which
     is the result of a generalization.
   \item Driving cannot transform any further the subexpressions \verb|A|, \verb|Nil|, and \verb|z|, 
     so they end up as leafs in the lazy graph.
@@ -699,7 +699,7 @@ The example programs and expressions are shown in Fig. \ref{fig:Examples}.
     In a way, it can also be seen as a proof that list append is associative.
   \item The ``KMP test'' (Fig. \ref{sfig:SubstrPrg}-\subref{sfig:KMP}) is another classical example, 
     which demonstrates the power of supercompilation with respect to deforestation and partial evaluation.
-    It involves specializing a sub-list predicate to a fixed sub-list being
+    It involves specializing a sublist predicate to a fixed sublist being
     searched in an unknown list.
   \item ``\verb|eqBool| symmetry'' (Fig. \ref{sfig:SubstrPrg}, \ref{sfig:BoolEqSym}) is intended
     to show that Boolean equality is symmetric.
