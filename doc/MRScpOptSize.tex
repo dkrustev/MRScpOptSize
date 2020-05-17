@@ -168,10 +168,8 @@ complete set of configuration graphs produced by multi-result supercompilation.
     plus the renaming, which makes the folded configurations compatible.
     Note that, following Grechanik et al. \cite{Romanenko2014StagedMRSC}, we consider
     only folding to a node on the path from the current node to the root of the graph.
-    The main reason to avoid folding to other nodes in the graph -- as some other
-    supercompilers do -- is that our lazy graph is a compact representation of
-    a whole set of configuration graphs, and permitting cross edges 
-    would complicate a lot the semantics of the lazy graph.
+    This choice enables us to keep more simple the representation of the
+    set of configuration graphs we produce.
     Also, similar to other positive supercompilers \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014},
     it is only possible to fold to a node, which is a renaming of the current one.
   \item Node \verb|GSBuild| is the most complicated one, representing a list
@@ -387,7 +385,7 @@ in most introductions to positive supercompilation \cite{Sorensen1994TurchinSupe
 Using this definition of driving, plus the usual definitions of folding, whistle, and generalization, 
 we can build configuration graphs of the form shown in Fig. \ref{fig:ConfGraph}.
 Note that we use the same representation of variables inside object-language programs and inside configuration graphs,
-as no confusions arise (asuming suitable measures for avoiding variable capture).
+as no confusions arise (assuming suitable measures for avoiding variable capture).
 
 \begin{figure}
 \begin{lstlisting}
@@ -554,7 +552,7 @@ The full lazy graph for the same example is shown in Appendix \ref{app:ExpGrowth
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
-We have studied the behaviour of the proposed multi-result supercompiler on a few simple
+We have studied the behavior of the proposed multi-result supercompiler on a few simple
 examples, with a focus on the resulting program size.
 A straightforward approach, which works for some of the smaller examples,
 is to enumerate all resulting configuration graphs and gather statistics from them.
@@ -574,11 +572,15 @@ In particular, we have implemented functions to extract:
 \end{itemize}
 The implementation of the last 2 functions is provided in Appendix \ref{app:FilterGraphSet},
 the other 2 are similar.
+These implementations take polynomial time (and often almost linear time in practice)  
+with respect to the size of the lazy graph,
+while the number of configuration graphs can be exponential with respect to this size.
+As such, they are key to making the proposed approach tractable on larger examples.
 By comparing the first to the smallest and the largest graph we can see how 
-successful is the proposed generalization strategy in controlling code size.
-By comparing the first to the last graph, we can see the impact of different choices
-(avoiding to duplicate code vs. permitting it in order to hopefully have more optimization opportunities later)
-in different example programs.
+successful the proposed generalization strategy is in controlling code size.
+By comparing the last to the first and the smallest graph, we can see the improvements
+that our approach can achieve with respect to standard supercompilation --
+as the last configuration graph corresponds to the one that a standard positive supercompiler would produce.
 
 After we extract a single configuration graph out of the lazy graph, we can further
 produce a new program in the object language from this graph.
@@ -601,7 +603,7 @@ Note, however, that we have decided to compare the sizes of the configuration gr
 programs, for a couple of reasons:
 \begin{itemize}
   \item The size of the resulting program depends not only on the optimizations performed by supercompilation proper
-    (which are refelected directly in the configuration graph), but also on the additional optimizations performed
+    (which are reflected directly in the configuration graph), but also on the additional optimizations performed
     during residualization.
     The latter are standard optimizations that can be performed on any program, no matter if it is produced
     by supercompilation or written by hand.
