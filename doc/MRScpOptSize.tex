@@ -22,6 +22,8 @@
 \usepackage{algpseudocode}      % layout for algorithmicx
 \usepackage{algorithm}          % float wrapper for algorithms
 
+\usepackage{graphicx} % \includegraphics{...}
+
 \usepackage[inline]{enumitem}
 
 \usepackage{randtext}
@@ -493,29 +495,41 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     where $x_0, \ldots, x_n$ are, as usual, fresh.
 \end{itemize}
 
-To illustrate the process on a very simple example, consider the trivial program 
-$P$ $=$ $\{$ \verb|f(x,y)| \verb|=| \verb|Pair(x,y);| $\}$. 
-If we supercompile the expression \verb|f(A,B)|, we shall obtain the graph set shown in Fig. \ref{fig:TrivGraphSet},
-which corresponds to 2 configuration graphs -- one with generalization, and one without.
+%To illustrate the process on a very simple example, consider the trivial program 
+%$P$ $=$ $\{$ \verb|f(x,y)| \verb|=| \verb|Pair(x,y);| $\}$. 
+%If we supercompile the expression \verb|f(A,B)|, we shall obtain the graph set shown in Fig. \ref{fig:TrivGraphSet},
+%which corresponds to 2 configuration graphs -- one with generalization, and one without.
+%
+%\begin{figure}
+%\begin{lstlisting}
+%GSBuild
+%  ((MDSRUnfold f(A(), B()), f(A(), B())),
+%   [[GSBuild
+%      ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), Pair(x0, y0)),
+%       [[GSBuild ((MDSRCon ("Pair",[x0; y0]), x0),[[]]);
+%         GSBuild ((MDSRCon ("Pair",[x0; y0]), y0),[[]])]]);
+%     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), A()),[[]]);
+%     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), B()),[[]])];
+%    [GSBuild
+%       ((MDSRUnfold Pair(A(), B()), Pair(A(), B())),
+%        [[GSBuild ((MDSRCon ("Pair",[A(); B()]), A()),[[]]);
+%          GSBuild ((MDSRCon ("Pair",[A(); B()]), B()),[[]])]])]])
+%\end{lstlisting}
+%\caption{The Graph Set of a Trivial Program}
+%\label{fig:TrivGraphSet}
+%\end{figure}
 
 \begin{figure}
-\begin{lstlisting}
-GSBuild
-  ((MDSRUnfold f(A(), B()), f(A(), B())),
-   [[GSBuild
-      ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), Pair(x0, y0)),
-       [[GSBuild ((MDSRCon ("Pair",[x0; y0]), x0),[[]]);
-         GSBuild ((MDSRCon ("Pair",[x0; y0]), y0),[[]])]]);
-     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), A()),[[]]);
-     GSBuild ((MDSRLet ([("x0", A()); ("y0", B())],Pair(x0, y0)), B()),[[]])];
-    [GSBuild
-       ((MDSRUnfold Pair(A(), B()), Pair(A(), B())),
-        [[GSBuild ((MDSRCon ("Pair",[A(); B()]), A()),[[]]);
-          GSBuild ((MDSRCon ("Pair",[A(); B()]), B()),[[]])]])]])
-\end{lstlisting}
-\caption{The Graph Set of a Trivial Program}
-\label{fig:TrivGraphSet}
+  \centering
+  \includegraphics[width=\textwidth]{inc/expGrowthSmallGraphSetPartial.pdf}
+  \caption{Partial Lazy Graph of ``exp growth'' Small Example}\label{fig:ExpGrowthSmallPartialGraphSet}
 \end{figure}
+
+To illustrate the process on a very simple example, consider the example program from 
+Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth}, specialized to smaller input:
+\verb|g(Cons(A, Nil), z)|.
+A part of the resulting lazy graph (omitting sub-graphs for alternatives other than the first)
+is shown in Fig. \ref{fig:ExpGrowthSmallPartialGraphSet}.
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
@@ -901,6 +915,7 @@ the helpful suggestions on improving the presentation of
 this article.
 
 %\nocite{*}
+
 \bibliographystyle{eptcs}
 \bibliography{MRScpOptSize}
 
