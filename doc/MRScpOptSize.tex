@@ -732,9 +732,10 @@ Several interesting observations stem from analyzing the selected resulting prog
     in 1 case (``double append'') -- with the last (least generalizing) result. 
     In ``KMP test'' the difference between the minimum-size and the last program is minimal.
     This confirms the highly unpredictable impact of driving+generalization on program size.
-  \item Note, however, that ``double append'' is a bit of an outlier -- it results in only 4 programs,
-    one of which (the largest) is isomorphic to the input. The 2 smallest ones are the expected
+  \item Note, however, that ``double append'' is a bit of an outlier -- it results in only 3 programs,
+    one of which (the first) is isomorphic to the input. The smallest one is the expected
     optimized version, shown in Fig. \ref{fig:DoubleAppResult}.
+    The full lazy graph for this example is shown in Appendix \ref{app:AppAppGraphSet}.
   \item In all cases, the size of the first result is closer to the minimum than to the maximum size.
     This confirms that our choice of generalization ensures limited growth of the result size.
   \item The smallest/last ``KMP test'' graph produces the expected optimal (as execution time) program,
@@ -979,6 +980,14 @@ let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet
   \centering
   \includegraphics[width=0.9\textheight,angle=90]{inc/expGrowthSmallGraphSet.pdf}
 %  \caption{Partial Lazy Graph of ``exp growth'' Small Example}\label{fig:ExpGrowthSmallPartialGraphSet}
+\end{figure}
+
+\clearpage
+\section{Full Lazy Graph of ``double append'' Example}\label{app:AppAppGraphSet}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textheight,angle=90]{inc/appAppGraphSet.pdf}
 \end{figure}
 
 
