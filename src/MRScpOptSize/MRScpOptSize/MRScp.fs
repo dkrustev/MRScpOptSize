@@ -38,11 +38,11 @@ let private buildGraph (e: Exp) (cgs: list<MConf * ConfGraph>) : ConfGraph =
 let rec gset2graphs (gs: GraphSet) : seq<MConf * ConfGraph> =
     match gs with
     | GSNone -> Seq.empty
-    | GSFold(conf, n, ren) -> seq{ yield (conf, CGFold(n, ren)) }
-    | GSBuild(conf, xss) ->
-        xss
-        |> Seq.collect (fun xs -> xs |> Seq.map gset2graphs |> Seq.cartesian)
-        |> Seq.map (fun cgs -> (conf, buildGraph (snd conf) cgs))
+    | GSFold(conf, n, ren) -> Seq.singleton (conf, CGFold(n, ren)) 
+    | GSBuild(conf, alts) ->
+        let buildGraph' subGraphs = (conf, buildGraph (snd conf) subGraphs)
+        let buildAlt alt = Seq.map buildGraph' (Seq.cartesian (Seq.map gset2graphs alt))
+        Seq.collect buildAlt alts
 
 type private HistEntryKind = HEGlobal | HELocal
 
