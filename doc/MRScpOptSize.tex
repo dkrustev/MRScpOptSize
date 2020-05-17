@@ -526,10 +526,31 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
 \end{figure}
 
 To illustrate the process on a very simple example, consider the example program from 
-Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth}, specialized to smaller input:
-\verb|g(Cons(A, Nil), z)|.
-A part of the resulting lazy graph (omitting sub-graphs for alternatives other than the first)
+Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth} (explained in Sec. \ref{sec:EmpEval}), 
+but specialized to a smaller input: \verb|g(Cons(A, Nil), z)|.
+A part of the resulting lazy graph (omitting subgraphs for alternatives other than the first)
 is shown in Fig. \ref{fig:ExpGrowthSmallPartialGraphSet}.
+The full lazy graph for the same example is shown in Appendix \ref{app:ExpGrowthSmallGraphSet}.
+\begin{itemize}
+  \item Multi-result driving produces 2 alternatives from the initial expression \verb|g(Cons(A, Nil), z)|:
+    \verb|let x0 = A; xs0 = Nil; y0 = z in f(g(xs0, y0))| and \verb|f(g(Nil, z))|.
+    As mentioned, we further consider only the sub-graph for the first alternative, which
+    is the result of a generalization.
+  \item Driving cannot transform any further the subexpressions \verb|A|, \verb|Nil|, and \verb|z|, 
+    so they end up as leafs in the lazy graph.
+    Driving the subexpression \verb|f(g(xs0, y0))| again produces 2 alternatives:
+    \verb|let w0 = g(xs0, y0) in B(w0, w0)| and \verb|B(g(xs0, y0), g(xs0, y0))|.
+  \item The first alternative here has 2 subexpressions: 
+    \begin{itemize}
+      \item \verb|B(w0, w0)|, where driving of its subexpressions in turn leads to 2 leafs, both \verb|w0|;
+      \item \verb|g(xs0, y0)|, where driving must perform a case analysis on \verb|x0|, resulting in 2 subgraphs:
+      \begin{itemize}
+        \item \verb|case xs0 = Nil() : y0|, where driving cannot proceed any further;
+        \item \verb|case xs0 = Cons(x0, xs1) : f(g(xs1, y0))| -- this expression is a renaming of
+          \verb|f(g(xs0, y0))|, encountered above, so we end up with a folding node.
+      \end{itemize}
+    \end{itemize}
+\end{itemize}
 
 \section{Empirical Evaluation}\label{sec:EmpEval}
 
@@ -948,6 +969,15 @@ let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet
     | -1, _ -> (-1, GSNone)
     | k, gs -> (1 + k, GSBuild(c, [gs]))
 \end{lstlisting}
+
+\clearpage
+\section{Full Lazy Graph of ``exp growth'' Small Example}\label{app:ExpGrowthSmallGraphSet}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textheight,angle=90]{inc/expGrowthSmallGraphSet.pdf}
+%  \caption{Partial Lazy Graph of ``exp growth'' Small Example}\label{fig:ExpGrowthSmallPartialGraphSet}
+\end{figure}
 
 
 \end{document}
