@@ -723,7 +723,8 @@ g(Cons(A, Cons(A, Cons(A, Nil))), z)
 \caption{Example Programs}\label{fig:Examples}
 \end{figure*}
 
-The example programs and expressions are shown in Fig. \ref{fig:Examples}.
+Here we analyze in detail several of the example programs (Fig. \ref{fig:Examples}) showing the most interesting results.
+The remaining few examples are shown in Appendix \ref{app:MoreExapmles}.
 \begin{itemize}
   \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
     demonstrate the power of deforestation and supercompilation.
@@ -1021,5 +1022,117 @@ let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet
   \includegraphics[width=0.9\textheight,angle=90]{inc/appAppGraphSet.pdf}
 \end{figure}
 
+\clearpage
+\section{Additional Examples}\label{app:MoreExapmles}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=Even-or-odd Program]
+or(True,  y) = True;
+or(False, y) = y;
+
+even(Z)    = True;
+even(S(n)) = odd(n);
+odd(Z)    = False;
+odd(S(n)) = even(n);
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=Even-or-odd Expression]
+or(even(n), odd(n))
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=Even-or-odd First/Minimal Result]
+main_case0(True(), n) = True();
+main_case0(False(), n) = f_1(n);
+f_1(n) = f_1_case0(n);
+f_1_case0(Z(), ) = False();
+f_1_case0(S(n0), ) = f_1_case1(n0);
+f_1_case1(Z(), ) = True();
+f_1_case1(S(n1), ) = f_1(n1);
+f_0(n) = f_0_case0(n);
+f_0_case0(Z(), ) = True();
+f_0_case0(S(n0), ) = f_0_case1(n0);
+f_0_case1(Z(), ) = False();
+f_0_case1(S(n1), ) = f_0(n1);
+expression: main_case0(f_0(n), n)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=idNat Idempotent Program]
+idNat(Z)    = Z;
+idNat(S(n)) = S(idNat(n));
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=idNat Idempotent Expression]
+idNat(idNat(n))
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=idNat Idempotent Last/Minimal Result]
+f_(n) = f__case0(n);
+f__case0(Z(), ) = Z();
+f__case0(S(n00), ) = S(f_(n00));
+expression: f_(n)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=take-length Program]
+length(Nil)         = Z;
+length(Cons(x, xs)) = S(length(xs));
+
+take(Z,    xs) = Nil;
+take(S(n), xs) = takeS(xs, n);
+takeS(Nil,         n) = Nil;
+takeS(Cons(x, xs), n) = Cons(x, take(n, xs));
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=take-length Expression]
+take(length(xs), xs)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=take-length Last/Minimal Result]
+f_(xs) = f__case0(xs);
+f__case0(Nil(), ) = Nil();
+f__case0(Cons(x00, xs00), ) = Cons(x00, f_(xs00));
+expression: f_(xs)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=length-intersperse Program]
+eqNat(Z,    n) = eqNatZ(n);
+eqNat(S(m), n) = eqNatS(n, m);
+eqNatZ(Z)    = True;
+eqNatZ(S(n)) = False;
+eqNatS(Z,    m) = False;
+eqNatS(S(n), m) = eqNat(m, n);
+
+length(Nil)         = Z;
+length(Cons(x, xs)) = S(length(xs));
+
+intersperse(Nil,         sep) = Nil;
+intersperse(Cons(x, xs), sep) = Cons(x, prependToAll(xs, sep));
+prependToAll(Nil,         sep) = Nil;
+prependToAll(Cons(x, xs), sep) = Cons(sep, Cons(x, prependToAll(xs, sep)));
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=length-intersperse Expression]
+eqNat(length(intersperse(xs, s1)), length(intersperse(xs, s2)))
+\end{lstlisting}
+
+\begin{lstlisting}[language=Lisp,keywords={},caption=length-intersperse Last/Minimal Result]
+main_case0(Nil(), s2, s1) = True();
+main_case0(Cons(x000, xs000), s2, s1) = f_0_0_0_1(xs000, s2, s1);
+f_0_0_0_1(xs000, s2, s1) = f_0_0_0_1_case0(xs000, s2, s1);
+f_0_0_0_1_case0(Nil(), s2, s1) = True();
+f_0_0_0_1_case0(Cons(x000, xs001), s2, s1) = f_0_0_0_1(x000, xs001, s2, s1);
+expression: main_case0(xs, s2, s1)
+\end{lstlisting}
+
+\begin{table}
+  \centering
+  \caption{Additional Examples Statistics\\(Configuration graph sizes)}\label{tbl:MoreExamplesStats}
+  \begin{tabular}{l|r|r|r|r}
+    \hline
+    Example                 & First & Last & Min. size & Max. size \\ \hline
+    Even-or-odd             &    14 &   18 &        14 &        21 \\
+    \verb|idNat| Idempotent &     9 &    6 &         6 &        12 \\
+    take-length             &    13 &    8 &         8 &        19 \\
+    length-intersperse      &    36 &   27 &        27 &       187 \\
+  \end{tabular}
+\end{table}
 
 \end{document}
