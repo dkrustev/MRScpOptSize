@@ -20,7 +20,11 @@ let main argv =
         (ExpParser.str2exp "f(f(A))")
     Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "appApp" Examples.appDef Examples.appAppExample
     Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "boolEqSym" Examples.kmpDef Examples.boolEqSymExample
+    Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "evenOrOdd" Examples.evenOrOddDef Examples.evenOrOddExample
+    Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "takeLength" Examples.takeLengthDef Examples.takeLengthExample
+    Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "idNatIdemp" Examples.idNatIdempDef Examples.idNatIdempExample
+    Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "lengthIntersperse" Examples.lengthIntersperseDef Examples.lengthIntersperseExample
     Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowthSmall" Examples.expGrowthDef Examples.expGrowthSmallExample
-    Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
-    Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
+    //Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
+    //Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
     0 // return an integer exit code

@@ -109,4 +109,54 @@ let expGrowthDef = ExpParser.str2defs expGrowthDefStr
 let expGrowthExample = ExpParser.str2exp "g(Cons(A, Cons(A, Cons(A, Nil))), z)"
 let expGrowthSmallExample = ExpParser.str2exp "g(Cons(A, Nil), z)"
 
+let evenOrOddDefStr = """
+or(True,  y) = True;
+or(False, y) = y;
+
+even(Z)    = True;
+even(S(n)) = odd(n);
+odd(Z)    = False;
+odd(S(n)) = even(n);
+"""
+let evenOrOddDef = ExpParser.str2defs evenOrOddDefStr
+let evenOrOddExample = ExpParser.str2exp "or(even(n), odd(n))"
+
+let idNatIdempDefStr = """
+idNat(Z)    = Z;
+idNat(S(n)) = S(idNat(n));
+"""
+let idNatIdempDef = ExpParser.str2defs idNatIdempDefStr
+let idNatIdempExample = ExpParser.str2exp "idNat(idNat(n))"
+
+let takeLengthDefStr = """
+length(Nil)         = Z;
+length(Cons(x, xs)) = S(length(xs));
+
+take(Z,    xs) = Nil;
+take(S(n), xs) = takeS(xs, n);
+takeS(Nil,         n) = Nil;
+takeS(Cons(x, xs), n) = Cons(x, take(n, xs));
+"""
+let takeLengthDef = ExpParser.str2defs takeLengthDefStr
+let takeLengthExample = ExpParser.str2exp "take(length(xs), xs)"
+
+let lengthIntersperseDefStr = """
+eqNat(Z,    n) = eqNatZ(n);
+eqNat(S(m), n) = eqNatS(n, m);
+eqNatZ(Z)    = True;
+eqNatZ(S(n)) = False;
+eqNatS(Z,    m) = False;
+eqNatS(S(n), m) = eqNat(m, n);
+
+length(Nil)         = Z;
+length(Cons(x, xs)) = S(length(xs));
+
+intersperse(Nil,         sep) = Nil;
+intersperse(Cons(x, xs), sep) = Cons(x, prependToAll(xs, sep));
+prependToAll(Nil,         sep) = Nil;
+prependToAll(Cons(x, xs), sep) = Cons(sep, Cons(x, prependToAll(xs, sep)));
+"""
+let lengthIntersperseDef = ExpParser.str2defs lengthIntersperseDefStr
+let lengthIntersperseExample = ExpParser.str2exp "eqNat(length(intersperse(xs, s1)), length(intersperse(xs, s2)))"
+
 
