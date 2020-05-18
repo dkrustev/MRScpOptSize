@@ -90,8 +90,8 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 \begin{itemize}
   \item We propose a method of adapting some existing techniques (MRSC with
     efficient queries over result sets)
-    to solve in a systematic way the problem of code explosion during supercompilation.
-  \item We define a particular strategy for generalization during MRSC (Sec. \ref{sec:Generalize}), which:
+    to solve in a systematic way the problem of code explosion during supercompilation (Sec. \ref{sec:Generalize}).
+  \item We define a particular strategy for generalization during MRSC (Sec. \ref{sec:MRDriving}), which:
     \begin{itemize}
       \item avoids any risk of duplicating code during supercompilation (when applied);
       \item avoids unnecessary increase of the search space of possible
@@ -156,6 +156,8 @@ so some details will only become clear once we introduce this language.
 In particular, the supercompilation configurations (\verb|MConf|) we use are 
 a pair of a multi-result driving step output and an expression of the language,
 as described in Sec. \ref{sec:MRDriving}.
+A language-specific helper function \verb|buildGraph| builds a configuration graph
+from a given configuration and subgraphs.
 Still, the details of the language are not important for understanding the core
 MRSC algorithm; indeed, such details are successfully abstracted away in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
 We prefer to show excerpts from our actual implementation for concreteness.
@@ -164,7 +166,7 @@ and can be viewed as a domain-specific language (DSL) describing the constructio
 complete set of configuration graphs produced by multi-result supercompilation.
 \begin{itemize}
   \item Node \verb|GSNone| is used when the whistle has blown. 
-    It represents an empty set of configuration graphs;
+    It represents an empty set of configuration graphs.
   \item Node \verb|GSFold| is used when folding is possible. 
     It gives the relative distance to the upper node to which we fold, 
     plus the renaming, which makes the folded configurations compatible.
@@ -611,7 +613,7 @@ By comparing the first to the smallest and the largest graph we can see how
 successful the proposed generalization strategy is in controlling code size.
 By comparing the last to the first and the smallest graph, we can see the improvements
 that our approach can achieve with respect to standard supercompilation --
-as the last configuration graph corresponds to the one that a standard positive supercompiler would produce.
+as the last configuration graph usually corresponds to the one that a standard positive supercompiler would produce.
 
 After we extract a single configuration graph out of the lazy graph, we can further
 produce a new program in the object language from this graph.
@@ -920,8 +922,8 @@ even for the small examples we want to analyze.
 We have presented a study of the feasibility to control result size after supercompilation
 -- based on using multi-result supercompilation coupled with a specific generalization
 strategy avoiding code duplication.
-While the idea of multi-result supercompilation is not new, the idea to combine it
-with a specific generalization strategy -- geared toward reducing result size --
+While the idea of multi-result supercompilation is not new, the idea to use it -- combined
+with a specific generalization strategy -- for taming code explosion in supercompilation results
 appears new.
 The current results of the approach -- based on a small set of typical supercompilation examples --
 are encouraging:
