@@ -66,12 +66,13 @@ can be very unpredictable.
 This fact makes supercompilation problematic for including as an
 optimization step of a standard compiler, for example.
 Measures have been proposed to make supercompilation more
-well-behaved, both in execution time and result size \cite{bolingbroke2011improving,Jonsson2011Taming}.
+well-behaved, both in execution time and result size \cite{bolingbroke2011improving,Jonsson2011Taming},
+while still achieving substantial improvements in program run time.
 These proposals are all based on a combination of specially crafted and
 empirically fine-tuned heuristics.
 The main goal of the present study is to experiment with a more
-principled approach to optimizing the size of the program resulting
-from supercompilation.
+principled approach for finding a better balance between the size and the
+run-time performance of programs produced by supercompilation.
 This approach is based on a few key ideas:
 \begin{itemize}
   \item use multi-result supercompilation\footnote{often abbreviated as \emph{MRSC} from now on} 
@@ -104,15 +105,15 @@ in Sec. \ref{sec:MRSCSummary}. We then describe the main contributions of this s
 \section{Summary of Multi-result Supercompilation}\label{sec:MRSCSummary}
 
 Supercompilation is often defined as a transformation of ``configurations'' --
-data structures containing information about the original program and the
-current state of its transformation.
+data structures containing information about the set of states of program execution
+currently being explored.
 The configurations are typically produced by a process called ``driving'',
 and organized in ``configuration trees''.
 Sometimes the current configuration is similar enough to some previous one,
 and we can ``fold'' the former to the latter,
 turning the configuration tree into a ``configuration graph''.
 Finally, we can generate a new ``residual'' program from the configuration
-graph, where folding typically corresponds to the introduction of new
+graph, where folding typically corresponds to calls to functions introduced by new
 recursive definitions.
 To ensure termination of the supercompilation process, a check -- usually called 
 a ``whistle'' -- is systematically performed on the sequence of configurations
@@ -123,16 +124,16 @@ replace the current configuration by another, which avoids the non-termination
 risk, possibly by forgetting some information.
 The whistle usually marks the current configuration (``lower'' in the tree) as risking
 non-termination with respect to some other configuration produced earlier (``higher'' in the tree).
-Traditional supercompilers -- as described, for example, by S{\o}rensen et al. \cite{sorm98b} --
+Typical positive supercompilers -- as described, for example, by S{\o}rensen et al. \cite{sorm98b} --
 make a choice whether to generalize the ``lower'' or the ``upper'' configuration.
 One of the key insights behind multi-result supercompilation is that the place
 where the whistle has blown is not always the best place to make a generalization.
-The proposed solution is radical: do not generalize when the whistle has blown,
-but at any driving step, where a suitable generalization exists;
-pursue in parallel all possible combinations of driving/generalizing 
-the current configuration and its descendants.
-This parallel analysis of alternative configurations is the source
-of the multiple resulting programs.
+The proposed solution is radical: do not generalize when the whistle has blown;
+instead, at any driving step check if suitable generalizations exists and
+continue driving not only the non-generalized configuration, but also
+all generalized ones,
+giving rise to multiple alternative results of driving.
+This process is illustrated by the example at the end of Sec. \ref{sec:MRDriving}.
 
 Our implementation of multi-result supercompilation mostly follows the same
 generic framework used in \cite{Romanenko2014StagedMRSC,krustev2014approach}.
@@ -153,8 +154,8 @@ We use direct excerpts of the F\# code of the implementation\footnote{Available 
 they will be readable by anyone familiar with other functional languages such as OCaml or Haskell.
 Another important caveat is that we have implemented MRSC for programs in a specific language,
 so some details will only become clear once we introduce this language.
-In particular, the supercompilation configurations (\verb|MConf|) we use are 
-a pair of a multi-result driving step output and an expression of the language,
+In particular, the configurations (\verb|MConf|) we use are 
+pairs of a multi-result driving step output and an expression of the language,
 as described in Sec. \ref{sec:MRDriving}.
 A language-specific helper function \verb|buildGraph| builds a configuration graph
 from a given configuration and subgraphs.
@@ -197,7 +198,8 @@ let rec gset2graphs (gs: GraphSet) : seq<MConf * ConfGraph> =
   | GSFold(conf, n, ren) -> Seq.singleton (conf, CGFold(n, ren)) 
   | GSBuild(conf, alts) ->
       let buildGraph' subGraphs = (conf, buildGraph (snd conf) subGraphs)
-      let buildAlt alt = Seq.map buildGraph' (Seq.cartesian (Seq.map gset2graphs alt))
+      let buildAlt alt = 
+            Seq.map buildGraph' (Seq.cartesian (Seq.map gset2graphs alt))
       Seq.collect buildAlt alts
 \end{lstlisting}
 \caption{Representation and Expansion of Graph Sets}
