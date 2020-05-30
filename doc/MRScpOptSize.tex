@@ -170,7 +170,7 @@ complete set of configuration graphs produced by multi-result supercompilation.
     It represents an empty set of configuration graphs.
   \item Node \verb|GSFold| is used when folding is possible. 
     It gives the relative distance to the upper node to which we fold, 
-    plus the renaming, which makes the folded configurations compatible.
+    plus the renaming (finite mapping of variables to variables), which makes the folded configurations compatible.
     Note that, following Grechanik et al. \cite{Romanenko2014StagedMRSC}, we consider
     only folding to a node on the path from the current node to the root of the graph.
     This choice enables us to keep more simple the representation of the
@@ -402,7 +402,7 @@ type DriveStepResult =
     \begin{itemize}
       \item $\mathtt{drive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
         $\mathtt{DSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
-        where $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
+        where $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) = e \in P$;
       \item $\mathtt{drive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
         $\mathtt{DSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
           $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))$
@@ -509,7 +509,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     $\mathtt{mrdrive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket = [$
     $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$ 
     $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])]$
-    where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) \in P$;
+    where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) = e \in P$;
   \item When we pattern-match on a variable, information propagation can introduce some code duplication. 
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
     We have currently decided to accept this limited form of potential duplication, without adding a generalization: \\
