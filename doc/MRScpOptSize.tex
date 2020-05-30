@@ -317,6 +317,8 @@ Its syntax is summarized in Fig. \ref{fig:SLLsyntax}.
 A very similar language -- with call-by-name semantics -- is often used in many introductions to positive
 supercompilation \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014}.
 A notable restriction in our case is that we omit if-expressions and a built-in generic equality.
+We use the convention that data constructors always start with an uppercase letter, while
+function and variable names start with a lowercase one.
 The patterns of any function definition must be exhaustive, not nested, and non-overlapping.
 As a technical detail, we do not make a distinction between ordinary and pattern-matching functions
 at each call site, as this information is uniquely determined by the function definition itself.
