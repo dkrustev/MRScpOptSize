@@ -251,13 +251,13 @@ the graph node of each alternative configuration.
   \caption{Main MRSC Algorithm}
   \label{alg:MRSCAlg}
   \begin{algorithmic}[1]
-    \Function{mrScpRec}{$p, l, h, c$}
-      \Comment{$p$ -- program (function definitions); $l$ -- nesting level; }
+    \Function{mrScpRec}{$P, l, h, c$}
+      \Comment{$P$ -- program (function definitions); $l$ -- nesting level; }
       \State \Comment{$h$ -- history (list of tuples: local/global flag; level; configuration); $c$ -- configuration}
       \If{$\exists (\_, l', c') \in h, \rho \textrm{ -- renaming} : c = \textit{rename}(c', \rho)$}
         \State \Return{$\mathtt{GSFold}(c, l - l', \rho)$}
       \Else
-        \State $\mathit{rs} \gets \mathtt{multiDriveSteps}(p, c)$
+        \State $\mathit{rs} \gets \mathtt{multiDriveSteps}(P, c)$
         \If{$\exists (\mathtt{MDSRCases} \_) \in \mathit{rs}$}
           \State $\mathit{hk} \gets \mathtt{HEGlobal}$
           \State $\mathit{relHist} \gets [ (\mathit{hk}', l, c) | \mathit{hk}' = \mathtt{HEGlobal} ]$
@@ -271,12 +271,12 @@ the graph node of each alternative configuration.
         \Else
           \State $\mathit{css} \gets \mathit{map}(\mathtt{mdsrSubExps}, \mathit{rs})$
           \State $h' \gets (\mathit{hk}, l, c)::h$
-          \State \Return $\mathtt{GSBuild}(c, \mathit{map}(\lambda \mathit{cs} . \mathit{map}(\lambda c . \Call{mrScpRec}{p, l+1, h', c}, \mathit{cs}) , css))$
+          \State \Return $\mathtt{GSBuild}(c, \mathit{map}(\lambda \mathit{cs} . \mathit{map}(\lambda c . \Call{mrScpRec}{P, l+1, h', c}, \mathit{cs}) , css))$
         \EndIf
       \EndIf
     \EndFunction
-    \Function{mrScp}{$p, c$}
-      \State \Return $\Call{mrScpRec}{p, 0, [], c}$
+    \Function{mrScp}{$P, c$}
+      \State \Return $\Call{mrScpRec}{P, 0, [], c}$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
