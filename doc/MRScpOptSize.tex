@@ -644,7 +644,7 @@ programs, for a couple of reasons:
     during residualization.
     The latter are standard optimizations that can be performed on any program, no matter if it is produced
     by supercompilation or written by hand.
-  \item As already mentioned, we have efficient methods to extract a configuration graph of optimum size from the lazy graph.
+  \item As already mentioned, we can efficiently to extract a configuration graph of optimum size from the lazy graph.
     We have no way to do the same with respect to the size of the residual program.
 \end{itemize}
 
@@ -734,7 +734,7 @@ The remaining few examples are shown in Appendix \ref{app:MoreExapmles}.
 \begin{itemize}
   \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
     demonstrate the power of deforestation and supercompilation.
-    In a way, it can also be seen as a first step of a proof that list append is associative.
+    It can also be seen as a first step of a proof that list append is associative.
   \item The ``KMP test'' (Fig. \ref{sfig:SubstrPrg}-\subref{sfig:KMP}) is another classical example, 
     which demonstrates the power of supercompilation with respect to deforestation and partial evaluation.
     It involves specializing a sublist predicate to a fixed sublist being
