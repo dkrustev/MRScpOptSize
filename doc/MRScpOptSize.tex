@@ -623,14 +623,14 @@ After we extract a single configuration graph out of the lazy graph, we can furt
 produce a new program in the object language from this graph.
 This residualization process involves 2 main steps:
   \begin{enumerate*}[label=\itshape\arabic*\upshape)]
-    \item Extract a program in a language extended with case and let expressions from the configuration graph.
+    \item Extract a program in a language extended with \verb|case| and \verb|let| expressions from the configuration graph.
       This step also creates recursive function definitions from fold nodes.
-    \item Remove let and case expressions (by a method similar to lambda lifting) to
+    \item Remove \verb|case| and \verb|let| expressions (by a method similar to lambda lifting) to
       obtain a program in the original object language.
   \end{enumerate*}
 The residualization process also includes several optimizations:
   \begin{enumerate*}[label=\itshape\alph*\upshape)]
-    \item removing ``trivial'' let expressions (expressions of the form \verb|let x = y in ...|, or where the variable is
+    \item removing ``trivial'' \verb|let| expressions (expressions of the form \verb|let x = y in ...|, or where the variable is
       only used once);
     \item removing duplicated function definitions (a limited form of common subexpression elimination).
   \end{enumerate*}
@@ -734,7 +734,7 @@ The remaining few examples are shown in Appendix \ref{app:MoreExapmles}.
 \begin{itemize}
   \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
     demonstrate the power of deforestation and supercompilation.
-    In a way, it can also be seen as a proof that list append is associative.
+    In a way, it can also be seen as a first step of a proof that list append is associative.
   \item The ``KMP test'' (Fig. \ref{sfig:SubstrPrg}-\subref{sfig:KMP}) is another classical example, 
     which demonstrates the power of supercompilation with respect to deforestation and partial evaluation.
     It involves specializing a sublist predicate to a fixed sublist being
@@ -888,7 +888,7 @@ Bolingbroke et al. \cite{bolingbroke2011improving} study heuristics for improvin
 performance of a specific supercompiler, in order to use it as an automatic phase of an optimizing 
 compiler for Haskell.
 Some of these heuristics concern avoiding code duplication, and as a consequence they may
-lead to improvements in result size.
+lead to improvements in result size, while still producing faster programs.
 The key idea is to roll back -- discarding some work done by the supercompiler -- if the heuristics
 indicate that this work is not leading to a useful result (a form of generalization).
 Speculative execution can also help with code size in some instances.
