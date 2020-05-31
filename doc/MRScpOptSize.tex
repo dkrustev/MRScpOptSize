@@ -1,7 +1,20 @@
-\documentclass[submission,copyright,creativecommons]{eptcs}
-\providecommand{\event}{VPT 2020} % Name of the event you are submitting to
+\newif\ifVptVer
+\VptVertrue
+
+\ifVptVer
+  \documentclass[submission,copyright,creativecommons]{eptcs}
+  \providecommand{\event}{VPT 2020} % Name of the event you are submitting to
+\else
+  \documentclass[copyright,creativecommons]{eptcs}
+  \providecommand{\publicationstatus}{} % do not show publication status
+  %\documentclass[10pt,a4paper]{article}
+  %\usepackage{hyperref}
+\fi
+
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
 \usepackage{underscore}           % Only needed if you use pdflatex.
+
+\usepackage{microtype}
 
 \usepackage{listings}
 \lstset{
@@ -29,12 +42,19 @@
 \newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
 
 \title{Optimizing Program Size Using Multi-result Supercompilation}
+
+\ifVptVer
 \author{Dimitur Nikolaev Krustev
 \institute{IGE+XAO Balkan\\ Sofia, Bulgaria}
 \email{\quad \EmailAddress{dkrustev}{ige-xao.com}}
 }
+\else
+\author{Dimitur Krustev\\IGE+XAO Balkan\\ Sofia, Bulgaria}
+\fi
+
 \def\titlerunning{Optimizing Program Size Using MRSC}
 \def\authorrunning{D.N. Krustev}
+
 \begin{document}
 \maketitle
 
@@ -340,12 +360,12 @@ at each call site, as this information is uniquely determined by the function de
   $p$ & ::= & $C(x_1, $\ldots$, x_n)$ & 
 \end{tabular}
 \end{minipage}%
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}{0.54\textwidth}
 \flushleft{\emph{Function definitions}}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
   $d$ & ::=     & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
-      & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching function \\
-      &         & $\ldots$ & \\
+      & $\mid$  & $g(p_1, y_1, \ldots, y_m) = e_1$ & pattern-matching \\
+      &         & $\ldots$                         & \hspace{18pt} function \\
       &         & $g(p_n, y_1, \ldots, y_m) = e_n$ & 
 \end{tabular}
 \flushleft{\emph{Programs}}
@@ -411,8 +431,8 @@ type DriveStepResult =
         where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$
         and $\mathtt{propagate}$ performs positive information propagation by substituting (a suitable renaming of) $p_i$ for $x$ 
         in the corresponding branch $i$;
-      \item $\mathtt{drive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
-        $\mathtt{dsrMap}(\llbracket g(\bullet, e_1, \ldots, e_n) \rrbracket, \mathtt{drive} \llbracket f(e'_1, \ldots, e'_m) \rrbracket)$
+      \item $\mathtt{drive}$ $\llbracket g(f(e'_1,$ \ldots$, e'_m),$ $e_1,$ \ldots$, e_n) \rrbracket$ $=$
+        $\mathtt{dsrMap}$$(\llbracket g(\bullet, e_1,$ \ldots$, e_n) \rrbracket,$ $\mathtt{drive} \llbracket f(e'_1,$ \ldots$, e'_m) \rrbracket)$
         where $\mathtt{dsrMap}$ transforms a driving step result by splicing it in an expression with a hole\footnote{
         We implement expressions with a single hole as functions from expressions to expressions.}.
     \end{itemize}
@@ -508,9 +528,10 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     earlier in the resulting sequence will have more generalizations;
   \item The case of a pattern-matching call with a known constructor is completely
     analogous to the previous one: \\
-    $\mathtt{mrdrive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket = [$
-    $\mathtt{MDSRLet}(u_1=e'_1, \ldots, u_m=e'_m, z_1=e_1, \ldots, z_n=e_n, e [ x_1\rightarrow u_1, \ldots, x_m\rightarrow u_m, y_1 \rightarrow z_1, \ldots, y_n \rightarrow z_n ]);$ 
-    $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])]$
+    $\mathtt{mrdrive} \llbracket g(C(e'_1,$ \ldots$, e'_m), e_1,$ \ldots$, e_n) \rrbracket = [$
+    $\mathtt{MDSRLet}(u_1=e'_1,$ \ldots$, u_m=e'_m, z_1=e_1,$ \ldots$, z_n=e_n,$ 
+      $e [ x_1\rightarrow u_1,$ \ldots$, x_m\rightarrow u_m, y_1 \rightarrow z_1,$ \ldots$, y_n \rightarrow z_n ]);$ 
+    $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e'_1,$ \ldots$, x_m\rightarrow e'_m, y_1 \rightarrow e_1,$ \ldots$, y_n \rightarrow e_n ])]$
     where $u_1, \ldots, u_m, z_1, \ldots, z_n$ are fresh and $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) = e \in P$;
   \item When we pattern-match on a variable, information propagation can introduce some code duplication. 
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
@@ -981,6 +1002,9 @@ this article.
 \bibliographystyle{eptcs}
 \bibliography{MRScpOptSize}
 
+\ifVptVer
+\else
+
 \appendix
 
 \clearpage
@@ -1141,4 +1165,7 @@ expression: main_case0(xs, s2, s1)
   \end{tabular}
 \end{table}
 
+\fi
+
 \end{document}
+
