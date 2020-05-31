@@ -15,7 +15,7 @@
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
 \usepackage{underscore}           % Only needed if you use pdflatex.
 
-%\usepackage{microtype}
+\usepackage{microtype}
 
 \usepackage{listings}
 \lstset{
@@ -844,7 +844,15 @@ Several interesting observations stem from analyzing the selected resulting prog
     of the residualized program, as unfolding nodes are skipped during residualization.
     Another possibility is to find not only (one of) the minimum-size result(s), but the $N$ smallest
     results ($N$ being an input parameter).
-    
+\end{itemize}
+Based on the last observation, we have implemented modified queries for finding the graph of minimum (and maximum) size, where
+unfolding nodes are not counted -- with very encouraging results:
+\begin{itemize}
+  \item for ``double append'', ``KMP test'', and ``\verb|eqBool| symmetry'' the modified query returns
+    the same optimal programs discussed above, which were also found by the existing queries for 
+    minimum or last program;
+  \item for ``exp growth'' the modified-minimum query finds again the optimal program -- shown Fig. \ref{fig:ExpGrowthOptResult}
+    -- which was missed by all standard queries.
 \end{itemize}
 
 \begin{figure}
