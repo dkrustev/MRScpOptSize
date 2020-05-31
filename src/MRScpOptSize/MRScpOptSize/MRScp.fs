@@ -71,7 +71,7 @@ let mrScp (defs: Defs) (e: Exp) : GraphSet =
 
 module GraphSetOps =
 
-    let rec minMaxSizeGraph (cmp: int -> int -> bool) (g: GraphSet) : int * GraphSet =
+    let rec minMaxSizeGraph (cmp: int -> int -> bool) (confWeight: MConf -> int) (g: GraphSet) : int * GraphSet =
         let selectMinMax (kx: int * 'A) (ky: int * 'A) : int * 'A =
             match kx, ky with
             | (-1, _), _ -> ky
@@ -79,7 +79,7 @@ module GraphSetOps =
             | (k1, x), (k2, y) -> if cmp k1 k2 then kx else ky
         let minMaxSizeGraphs (gs: list<GraphSet>) : int * list<GraphSet> =
             (0, []) |> List.foldBack (fun g kgs -> 
-                match minMaxSizeGraph cmp g, kgs with
+                match minMaxSizeGraph cmp confWeight g, kgs with
                 | (-1, g), (_, gs) -> (-1, g::gs)
                 | (_, g), (-1, gs) -> (-1, g::gs)
                 | (i, g), (j, gs) -> (i + j, g::gs)
@@ -92,7 +92,7 @@ module GraphSetOps =
         | GSBuild(c, gss) -> 
             match minMaxSizeGraphss gss with
             | -1, _ -> (-1, GSNone)
-            | k, gs -> (1 + k, GSBuild(c, [gs]))
+            | k, gs -> (confWeight c + k, GSBuild(c, [gs]))
 
     let rec firstGraph (g: GraphSet) : GraphSet =
         let firstGraphs (gs: list<GraphSet>) : option<list<GraphSet>> =

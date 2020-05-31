@@ -20,14 +20,14 @@ let subgraphs g =
     | CGLet(defs, g) -> List.map snd defs @ [g]
     | _ -> []
 
-let rec graphSize g =
+let rec graphSize countUnfold g =
     match g with
     | CGLeaf _ -> 1
-    | CGCon(_, gs) -> 1 + List.sumBy graphSize gs
-    | CGUnfold g -> 1 + graphSize g
-    | CGCases(_, alts) -> 1 + List.sumBy (graphSize << snd) alts
+    | CGCon(_, gs) -> 1 + List.sumBy (graphSize countUnfold) gs
+    | CGUnfold g -> (if countUnfold then 1 else 0) + graphSize countUnfold g
+    | CGCases(_, alts) -> 1 + List.sumBy (graphSize countUnfold << snd) alts
     | CGFold _ -> 1
-    | CGLet(binds, g) -> 1 + List.sumBy (graphSize << snd) binds + graphSize g
+    | CGLet(binds, g) -> 1 + List.sumBy (graphSize countUnfold << snd) binds + graphSize countUnfold g
 
 module SimpleGraph =
 

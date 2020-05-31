@@ -25,6 +25,6 @@ let main argv =
     Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "idNatIdemp" Examples.idNatIdempDef Examples.idNatIdempExample
     Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "lengthIntersperse" Examples.lengthIntersperseDef Examples.lengthIntersperseExample
     Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowthSmall" Examples.expGrowthDef Examples.expGrowthSmallExample
-    //Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
-    //Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
+    Examples.mrScpDump true @"\Dev\FSharp\MRScpOptSize\output" "expGrowth" Examples.expGrowthDef Examples.expGrowthExample
+    Examples.mrScpDump false @"\Dev\FSharp\MRScpOptSize\output" "KMP" Examples.kmpDef Examples.kmpExample
     0 // return an integer exit code
