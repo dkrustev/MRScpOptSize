@@ -42,7 +42,7 @@
 \usepackage{randtext}
 \newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
 
-\title{Optimizing Program Size Using Multi-result Supercompilation}
+\title{Optimizing Program Size Using Multi-result Supercompilation \ifVptVer\else \\(Extended Report) \fi}
 
 \ifVptVer
 \author{Dimitur Nikolaev Krustev
@@ -587,7 +587,12 @@ Fig. \ref{sfig:ExpGrowthPrg}-\subref{sfig:ExpGrowth} (explained in Sec. \ref{sec
 but specialized to a smaller input: \verb|g(Cons(A, Nil), z)|.
 A part of the resulting lazy graph (omitting subgraphs for alternatives other than the first)
 is shown in Fig. \ref{fig:ExpGrowthSmallPartialGraphSet}.
-The full lazy graph for the same example is shown in Appendix \ref{app:ExpGrowthSmallGraphSet}.
+The full lazy graph for the same example is shown in 
+\ifVptVer
+the extended version of this article \cite{krustev2020MrscOptSizeReport}.
+\else
+Appendix \ref{app:ExpGrowthSmallGraphSet}.
+\fi
 \begin{itemize}
   \item Multi-result driving produces 2 alternatives from the initial expression \verb|g(Cons(A, Nil), z)|:
     \verb|let x0 = A; xs0 = Nil; y0 = z in f(g(xs0, y0))| and \verb|f(g(Nil, z))|.
@@ -629,7 +634,12 @@ In particular, we have implemented functions to extract:
   \item the graph with the smallest number of nodes;
   \item the graph with the largest number of nodes.
 \end{itemize}
-The implementation of the last 2 functions is provided in Appendix \ref{app:FilterGraphSet},
+The implementation of the last 2 functions is shown in
+\ifVptVer
+the extended version of this article \cite{krustev2020MrscOptSizeReport},
+\else
+Appendix \ref{app:FilterGraphSet},
+\fi
 the other 2 are similar.
 These implementations take polynomial time (and often almost linear time in practice)  
 with respect to the size of the lazy graph,
@@ -752,7 +762,11 @@ g(Cons(A, Cons(A, Cons(A, Nil))), z)
 \end{figure*}
 
 Here we analyze in detail several of the example programs (Fig. \ref{fig:Examples}) showing the most interesting results.
+\ifVptVer
+The extended version of this article \cite{krustev2020MrscOptSizeReport} discusses the remaining few examples as well.
+\else
 The remaining few examples are shown in Appendix \ref{app:MoreExapmles}.
+\fi
 \begin{itemize}
   \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
     demonstrate the power of deforestation and supercompilation.
@@ -795,7 +809,10 @@ Several interesting observations stem from analyzing the selected resulting prog
   \item Note, however, that ``double append'' is a bit of an outlier -- it results in only 3 programs,
     one of which (the first) is isomorphic to the input. The smallest one is the expected
     optimized version, shown in Fig. \ref{fig:DoubleAppResult}.
+\ifVptVer
+\else    
     The full lazy graph for this example is shown in Appendix \ref{app:AppAppGraphSet}.
+\fi    
   \item In all cases, the size of the first result is closer to the minimum than to the maximum size.
     This confirms that our choice of generalization ensures limited growth of the result size.
   \item The smallest/last ``KMP test'' graph produces the expected optimal (as execution time) program,
