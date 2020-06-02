@@ -1,6 +1,6 @@
 \PassOptionsToPackage{hyphens}{url}
 \newif\ifVptVer
-\VptVertrue
+%\VptVertrue
 
 \ifVptVer
   \documentclass[submission,copyright,creativecommons]{eptcs}
@@ -42,7 +42,11 @@
 \usepackage{randtext}
 \newcommand{\EmailAddress}[2]{\randomize{#1}@\randomize{#2}}
 
-\title{Optimizing Program Size Using Multi-result Supercompilation \ifVptVer\else \\(Extended Report) \fi}
+\ifVptVer
+\title{Optimizing Program Size Using Multi-result Supercompilation}
+\else
+\title{Controlling Size Of Supercompiled Programs Using Multi-result Supercompilation}
+\fi
 
 \ifVptVer
 \author{Dimitur Nikolaev Krustev
@@ -53,7 +57,11 @@
 \author{Dimitur Krustev\\IGE+XAO Balkan\\ Sofia, Bulgaria \\ \EmailAddress{dkrustev}{ige-xao.com}}
 \fi
 
+\ifVptVer
 \def\titlerunning{Optimizing Program Size Using MRSC}
+\else
+\def\titlerunning{Controlling Size Of Supercompiled Programs Using MRSC}
+\fi
 \def\authorrunning{D.N. Krustev}
 
 \begin{document}
