@@ -539,7 +539,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
   \item The variable case is again trivial: \\
     $\mathtt{mrdrive} \llbracket x \rrbracket = [\mathtt{MDSRLeaf}(x)]$;
     (We use $[\ldots; \ldots; \ldots]$ to denote a list of results.)
-  \item driving a constructor does not duplicate code, so we again make no generalization: \\ 
+  \item Driving a constructor does not duplicate code, so we again make no generalization: \\ 
     $\mathtt{mrdrive} \llbracket C(e_1, \ldots, e_n) \rrbracket = [\mathtt{MDSRCon}(C, e_1, \ldots, e_n)]$;
   \item The unfolding of a call to an ordinary function can produce code duplication, if some arguments appear
     multiple times in the body of the definition. 
