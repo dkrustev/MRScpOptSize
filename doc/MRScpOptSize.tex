@@ -6,10 +6,10 @@
   \documentclass[submission,copyright,creativecommons]{eptcs}
   \providecommand{\event}{VPT 2020} % Name of the event you are submitting to
 \else
-  \documentclass[copyright,creativecommons]{eptcs}
-  \providecommand{\publicationstatus}{} % do not show publication status
-  %\documentclass[10pt,a4paper]{article}
-  %\usepackage{hyperref}
+  %\documentclass[copyright,creativecommons]{eptcs}
+  %\providecommand{\publicationstatus}{} % do not show publication status
+  \documentclass[10pt,a4paper]{article}
+  \usepackage{hyperref}
 \fi
 
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
@@ -50,7 +50,7 @@
 \email{\quad \EmailAddress{dkrustev}{ige-xao.com}}
 }
 \else
-\author{Dimitur Krustev\\IGE+XAO Balkan\\ Sofia, Bulgaria}
+\author{Dimitur Krustev\\IGE+XAO Balkan\\ Sofia, Bulgaria \\ \EmailAddress{dkrustev}{ige-xao.com}}
 \fi
 
 \def\titlerunning{Optimizing Program Size Using MRSC}
@@ -268,13 +268,20 @@ the graph node of each alternative configuration.
 %\label{fig:MRSCAlg}
 %\end{figure}
 
-\begin{algorithm}[H]
+\begin{algorithm}[h]
   \caption{Main MRSC Algorithm}
   \label{alg:MRSCAlg}
   \begin{algorithmic}[1]
     \Function{mrScpRec}{$P, l, h, c$}
+\ifVptVer    
       \Comment{$P$ -- program (function definitions); $l$ -- nesting level; }
       \State \Comment{$h$ -- history (list of tuples: local/global flag; level; configuration); $c$ -- configuration}
+\else
+      \Comment{$P$ -- program (function definitions); }
+      \State \Comment{$l$ -- nesting level; }
+      \State \Comment{$h$ -- history (list of tuples: local/global flag; level; configuration); }
+      \State \Comment{$c$ -- configuration}
+\fi      
       \If{$\exists (\_, l', c') \in h, \rho \textrm{ -- renaming} : c = \textit{rename}(c', \rho)$}
         \State \Return{$\mathtt{GSFold}(c, l - l', \rho)$}
       \Else
@@ -345,7 +352,10 @@ As a technical detail, we do not make a distinction between ordinary and pattern
 at each call site, as this information is uniquely determined by the function definition itself.
 
 \begin{figure}
+\ifVptVer  
 \begin{minipage}{0.4\textwidth}
+\else
+\fi  
 \emph{Expressions}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
   $e$ & ::= & $x$ & variable     \\
@@ -356,12 +366,15 @@ at each call site, as this information is uniquely determined by the function de
   $a$ & ::= & $C$ & constructor  \\
   & $\vert$ & $f$ & function     
 \end{tabular}
-\emph{Patterns}
+\flushleft{\emph{Patterns}}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
   $p$ & ::= & $C(x_1, $\ldots$, x_n)$ & 
 \end{tabular}
+\ifVptVer
 \end{minipage}%
 \begin{minipage}{0.54\textwidth}
+\else
+\fi  
 \flushleft{\emph{Function definitions}}
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
   $d$ & ::=     & $f(x_1, \ldots, x_n) = e$ & ordinary function \\
@@ -373,7 +386,10 @@ at each call site, as this information is uniquely determined by the function de
 \begin{tabular}[t]{l r l@{\hspace{20pt}} l}
   $P$ & ::= & $d_1, \ldots, d_n$ & 
 \end{tabular}
+\ifVptVer
 \end{minipage}
+\else
+\fi
 %\begin{tabular}[t]{l r l@{\hspace{20pt}} l}
 %$e$ & ::= && expression   \\
 %    && $x$ & variable     \\
@@ -418,7 +434,7 @@ type DriveStepResult =
     further driving: $\mathtt{drive} \llbracket C(e_1, \ldots, e_n) \rrbracket = \mathtt{DSRCon}(C, e_1, \ldots, e_n)$;
   \item If we stumble upon a call to an ordinary function, we simply unfold its definition: \\
     $\mathtt{drive} \llbracket f(e_1, \ldots, e_n) \rrbracket$ $=$ $\mathtt{DSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])$,
-    where $f(x_1, \ldots, x_n) = e \in P$ and $e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
+    where $f(x_1,$ \ldots$, x_n) = e \in P$ and $e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ] $
     denotes simultaneous substitution;
   \item The most interesting cases concern a call to a pattern-matching function, as the situation is
     different depending on the kind of the first argument:
@@ -426,10 +442,10 @@ type DriveStepResult =
       \item $\mathtt{drive} \llbracket g(C(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
         $\mathtt{DSRUnfold}(e [ x_1\rightarrow e'_1, \ldots, x_m\rightarrow e'_m, y_1 \rightarrow e_1, \ldots, y_n \rightarrow e_n ])$
         where $g(C(x_1, \ldots, x_m), y_1, \ldots, y_n) = e \in P$;
-      \item $\mathtt{drive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
-        $\mathtt{DSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
-          $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))$
-        where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$
+      \item $\mathtt{drive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket$ $=$
+        $\mathtt{DSRCases}$ $(x,$ $\mathtt{propagate}$ $(x, p_1, (e_1,$ \ldots$, e_n), e'_1),$ \ldots$,$ 
+          $\mathtt{propagate}$ $(x, p_m, (e_1,$ \ldots$, e_n), e'_m))$
+        where $g(p_1, y_1,$ \ldots$, y_n) = e'_1,$ \ldots$, g(p_m, y_1,$ \ldots$, y_n) = e'_m \in P$
         and $\mathtt{propagate}$ performs positive information propagation by substituting (a suitable renaming of) $p_i$ for $x$ 
         in the corresponding branch $i$;
       \item $\mathtt{drive}$ $\llbracket g(f(e'_1,$ \ldots$, e'_m),$ $e_1,$ \ldots$, e_n) \rrbracket$ $=$
@@ -521,7 +537,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     multiple times in the body of the definition. 
     We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work.}: \\
     $\mathtt{mrdrive} \llbracket f(e_1, \ldots, e_n) \rrbracket =$ 
-      $[\mathtt{MDSRLet}(y_1=e_1, \ldots, y_n=e_n, e [ x_1\rightarrow y_1, \ldots, x_n\rightarrow y_n ]); $ \\
+      $[\mathtt{MDSRLet}(y_1=e_1, \ldots, y_n=e_n, e [ x_1\rightarrow y_1,$ \ldots$, x_n\rightarrow y_n ]); $ \\
       $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])]$,
     where $y_1, \ldots, y_n$ are fresh and $f(x_1, \ldots, x_n) = e \in P$.
     Notice that we shall always place the generalization result before the driving result in the list.
@@ -538,17 +554,17 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
     We have currently decided to accept this limited form of potential duplication, without adding a generalization: \\
     $\mathtt{mrdrive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
-    $[\mathtt{MDSRCases}(x, \mathtt{propagate}(x, p_1, (e_1, \ldots, e_n), e'_1),$ $\ldots,$ \\
-    $\mathtt{propagate}(x, p_m, (e_1, \ldots, e_n), e'_m))]$
-    where $g(p_1, y_1, \ldots, y_n) = e'_1, \ldots, g(p_m, y_1, \ldots, y_n) = e'_m \in P$;
+    $[$ $\mathtt{MDSRCases}$ $(x,$ $\mathtt{propagate}$ $(x, p_1, (e_1,$ \ldots$, e_n), e'_1),$ \ldots$,$ 
+    $\mathtt{propagate}$ $(x, p_m, (e_1,$ \ldots$, e_n), e'_m))]$
+    where $g(p_1, y_1,$ \ldots$, y_n) = e'_1,$ \ldots$, g(p_m, y_1,$ \ldots$, y_n) = e'_m \in P$;
   \item The case of matching on a function call is perhaps the least obvious. 
     As during normal driving we reuse the result of driving the nested call, it is not clear in advance what
     it will be.
     So we prefer to be conservative, and add a full generalization of the outer call here: \\
     $\mathtt{mrdrive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
-    $[\mathtt{MDSRLet}$ $(x_0=f(e'_1, \ldots, e'_m), x_1=e_1, \ldots, x_n=e_n,$ \\
-    $g(x_0, \ldots, x_n));$ 
-    $\mathtt{mdsrMap}(\llbracket g(\bullet, e_1, \ldots, e_n) \rrbracket, \mathtt{mrdrive} \llbracket f(e'_1, \ldots, e'_m) \rrbracket)]$
+    $[\mathtt{MDSRLet}$ $(x_0=f(e'_1,$ \ldots$, e'_m), x_1=e_1,$ \ldots$, x_n=e_n,$ 
+    $g(x_0,$ \ldots$, x_n));$ 
+    $\mathtt{mdsrMap}(\llbracket g(\bullet, e_1,$ \ldots$, e_n) \rrbracket, \mathtt{mrdrive} \llbracket f(e'_1,$ \ldots$, e'_m) \rrbracket)]$
     where $x_0, \ldots, x_n$ are, as usual, fresh.
 \end{itemize}
 
@@ -595,13 +611,13 @@ Appendix \ref{app:ExpGrowthSmallGraphSet}.
 \fi
 \begin{itemize}
   \item Multi-result driving produces 2 alternatives from the initial expression \verb|g(Cons(A, Nil), z)|:
-    \verb|let x0 = A; xs0 = Nil; y0 = z in f(g(xs0, y0))| and \verb|f(g(Nil, z))|.
+    \verb|let| \verb|x0 = A;| \verb|xs0 = Nil;| \verb|y0 = z| \verb|in| \verb|f(g(xs0, y0))| and \verb|f(g(Nil, z))|.
     As mentioned, we further consider only the subgraph for the first alternative, which
     is the result of a generalization.
   \item Driving cannot transform any further the subexpressions \verb|A|, \verb|Nil|, and \verb|z|, 
     so they end up as leafs in the lazy graph.
     Driving the subexpression \verb|f(g(xs0, y0))| again produces 2 alternatives:
-    \verb|let w0 = g(xs0, y0) in B(w0, w0)| and \verb|B(g(xs0, y0), g(xs0, y0))|.
+    \verb|let| \verb|w0 = g(xs0, y0)| \verb|in| \verb|B(w0, w0)| and \verb|B(g(xs0, y0), g(xs0, y0))|.
   \item The first alternative here has 2 subexpressions: 
     \begin{itemize}
       \item \verb|B(w0, w0)|, where driving of its subexpressions in turn leads to 2 leafs, both \verb|w0|;
