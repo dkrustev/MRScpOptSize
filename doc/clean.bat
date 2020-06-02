@@ -3,6 +3,6 @@ del *.out
 del *.aux
 del *.log
 del *.blg
-del *.bbl
+rem del *.bbl
 del *.pag
 del *.synctex.gz
