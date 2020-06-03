@@ -1,0 +1,194 @@
+\begin{thebibliography}{10}
+\providecommand{\bibitemdeclare}[2]{}
+\providecommand{\surnamestart}{}
+\providecommand{\surnameend}{}
+\providecommand{\urlprefix}{Available at }
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{\texttt{#2}}
+\providecommand{\urlalt}[2]{\href{#1}{#2}}
+\providecommand{\doi}[1]{doi:\urlalt{http://dx.doi.org/#1}{#1}}
+\providecommand{\bibinfo}[2]{#2}
+
+\bibitemdeclare{inproceedings}{bolingbroke2011improving}
+\bibitem{bolingbroke2011improving}
+\bibinfo{author}{Max \surnamestart Bolingbroke\surnameend} \&
+  \bibinfo{author}{Simon \surnamestart Peyton~Jones\surnameend}
+  (\bibinfo{year}{2011}): \emph{\bibinfo{title}{Improving supercompilation:
+  tag-bags, rollback, speculation, normalisation, and generalisation}}.
+\newblock In: {\sl \bibinfo{booktitle}{ICFP}}.
+\newblock
+  \urlprefix\url{https://www.microsoft.com/en-us/research/publication/improving-supercompilation-tag-bags-rollback-speculation-normalisation-and-generalisation/}.
+
+\bibitemdeclare{inproceedings}{Romanenko2014StagedMRSC}
+\bibitem{Romanenko2014StagedMRSC}
+\bibinfo{author}{Sergei \surnamestart Grechanik\surnameend},
+  \bibinfo{author}{Ilya \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Sergei \surnamestart Romanenko\surnameend}
+  (\bibinfo{year}{2014}): \emph{\bibinfo{title}{Staged Multi-Result
+  Supercompilation: Filtering by Transformation}}.
+\newblock In \bibinfo{editor}{Andrei \surnamestart Klimov\surnameend} \&
+  \bibinfo{editor}{Sergei \surnamestart Romanenko\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Proceedings of the Fourth International Valentin Turchin
+  Workshop on Metacomputation}}, \bibinfo{publisher}{University of Pereslavl
+  Publishing House}, \bibinfo{address}{Pereslavl-Zalessky, Russia}, pp.
+  \bibinfo{pages}{54--78}.
+\newblock
+  \urlprefix\url{http://meta2014.pereslavl.ru/papers/2014_Grechanik_Klyuchnikov_Romanenko__Staged_Multi-Result_Supercompilation__Filtering_by_Transformation.pdf}.
+
+\bibitemdeclare{inproceedings}{10.1145/1244381.1244391}
+\bibitem{10.1145/1244381.1244391}
+\bibinfo{author}{G.~W. \surnamestart Hamilton\surnameend}
+  (\bibinfo{year}{2007}): \emph{\bibinfo{title}{Distillation: Extracting the
+  Essence of Programs}}.
+\newblock In: {\sl \bibinfo{booktitle}{Proceedings of the 2007 ACM SIGPLAN
+  Symposium on Partial Evaluation and Semantics-Based Program Manipulation}},
+  \bibinfo{series}{PEPM ’07}, \bibinfo{publisher}{Association for Computing
+  Machinery}, \bibinfo{address}{New York, NY, USA}, p.
+  \bibinfo{pages}{61–70}, \doi{10.1145/1244381.1244391}.
+\newblock \urlprefix\url{https://doi.org/10.1145/1244381.1244391}.
+
+\bibitemdeclare{book}{Jones:1993:PEA:153676}
+\bibitem{Jones:1993:PEA:153676}
+\bibinfo{author}{Neil~D. \surnamestart Jones\surnameend},
+  \bibinfo{author}{Carsten~K. \surnamestart Gomard\surnameend} \&
+  \bibinfo{author}{Peter \surnamestart Sestoft\surnameend}
+  (\bibinfo{year}{1993}): \emph{\bibinfo{title}{Partial Evaluation and
+  Automatic Program Generation}}.
+\newblock \bibinfo{publisher}{Prentice-Hall, Inc.}, \bibinfo{address}{Upper
+  Saddle River, NJ, USA}.
+
+\bibitemdeclare{inproceedings}{Jonsson2011Taming}
+\bibitem{Jonsson2011Taming}
+\bibinfo{author}{Peter~A. \surnamestart Jonsson\surnameend} \&
+  \bibinfo{author}{Johan \surnamestart Nordlander\surnameend}
+  (\bibinfo{year}{2011}): \emph{\bibinfo{title}{Taming Code Explosion in
+  Supercompilation}}.
+\newblock In: {\sl \bibinfo{booktitle}{Proceedings of the 20th ACM SIGPLAN
+  Workshop on Partial Evaluation and Program Manipulation}},
+  \bibinfo{series}{PEPM ’11}, \bibinfo{publisher}{Association for Computing
+  Machinery}, \bibinfo{address}{New York, NY, USA}, p.
+  \bibinfo{pages}{33–42}, \doi{10.1145/1929501.1929507}.
+\newblock \urlprefix\url{https://doi.org/10.1145/1929501.1929507}.
+
+\bibitemdeclare{article}{TMR/SCP2014}
+\bibitem{TMR/SCP2014}
+\bibinfo{author}{Ilya \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Dimitur \surnamestart Krustev\surnameend}
+  (\bibinfo{year}{2014}): \emph{\bibinfo{title}{Supercompilation: Ideas and
+  methods}}.
+\newblock {\sl \bibinfo{journal}{The Monad Reader}} \bibinfo{volume}{23}.
+
+\bibitemdeclare{inproceedings}{Klyuchnikov2010}
+\bibitem{Klyuchnikov2010}
+\bibinfo{author}{Ilya \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Sergei \surnamestart Romanenko\surnameend}
+  (\bibinfo{year}{2010}): \emph{\bibinfo{title}{Proving the Equivalence of
+  Higher-Order Terms by Means of Supercompilation}}.
+\newblock In \bibinfo{editor}{Amir \surnamestart Pnueli\surnameend},
+  \bibinfo{editor}{Irina \surnamestart Virbitskaite\surnameend} \&
+  \bibinfo{editor}{Andrei \surnamestart Voronkov\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Perspectives of Systems Informatics: 7th International
+  Andrei Ershov Memorial Conference, PSI 2009, Novosibirsk, Russia, June 15-19,
+  2009. Revised Papers}}, \bibinfo{publisher}{Springer Berlin Heidelberg},
+  \bibinfo{address}{Berlin, Heidelberg}, pp. \bibinfo{pages}{193--205},
+  \doi{10.1007/978-3-642-11486-1_17}.
+\newblock \urlprefix\url{http://dx.doi.org/10.1007/978-3-642-11486-1_17}.
+
+\bibitemdeclare{inproceedings}{KlyuchnikovMRSCBranch}
+\bibitem{KlyuchnikovMRSCBranch}
+\bibinfo{author}{Ilya \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Sergei~A. \surnamestart Romanenko\surnameend}
+  (\bibinfo{year}{2012}): \emph{\bibinfo{title}{Multi-result Supercompilation
+  as Branching Growth of the Penultimate Level in Metasystem Transitions}}.
+\newblock In \bibinfo{editor}{Edmund \surnamestart Clarke\surnameend},
+  \bibinfo{editor}{Irina \surnamestart Virbitskaite\surnameend} \&
+  \bibinfo{editor}{Andrei \surnamestart Voronkov\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Perspectives of Systems Informatics}},
+  \bibinfo{publisher}{Springer Berlin Heidelberg}, \bibinfo{address}{Berlin,
+  Heidelberg}, pp. \bibinfo{pages}{210--226},
+  \doi{10.1007/978-3-642-29709-0_19}.
+
+\bibitemdeclare{inproceedings}{Klyuchnikov:META2010:HigherLevelScp}
+\bibitem{Klyuchnikov:META2010:HigherLevelScp}
+\bibinfo{author}{Ilya~G. \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Sergei~A. \surnamestart Romanenko\surnameend}
+  (\bibinfo{year}{2010}): \emph{\bibinfo{title}{Towards Higher-Level
+  Supercompilation}}.
+\newblock In \bibinfo{editor}{A.~P. \surnamestart Nemytykh\surnameend}, editor:
+  {\sl \bibinfo{booktitle}{Proceedings of the Second International Workshop on
+  Metacomputation (META 2010)}}, pp. \bibinfo{pages}{82--101}.
+
+\bibitemdeclare{inproceedings}{Klyuchnikov:META2012:MRSC}
+\bibitem{Klyuchnikov:META2012:MRSC}
+\bibinfo{author}{Ilya~G. \surnamestart Klyuchnikov\surnameend} \&
+  \bibinfo{author}{Sergei~A. \surnamestart Romanenko\surnameend}
+  (\bibinfo{year}{2012}): \emph{\bibinfo{title}{Formalizing and Implementing
+  Multi-Result Supercompilation}}.
+\newblock In \bibinfo{editor}{A.~V. \surnamestart Klimov\surnameend} \&
+  \bibinfo{editor}{S.~A. \surnamestart Romanenko\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Proceedings of the Third International Workshop on
+  Metacomputation (META 2012)}}, pp. \bibinfo{pages}{142--164}.
+
+\bibitemdeclare{inproceedings}{krustev2014approach}
+\bibitem{krustev2014approach}
+\bibinfo{author}{Dimitur~Nikolaev \surnamestart Krustev\surnameend}
+  (\bibinfo{year}{2014}): \emph{\bibinfo{title}{An Approach for Modular
+  Verification of Multi-Result Supercompilers}}.
+\newblock In \bibinfo{editor}{A.V. \surnamestart Klimov\surnameend} \&
+  \bibinfo{editor}{S.A. \surnamestart Romamenko\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Proceedings of the Fourth International Valentin Turchin
+  Workshop on Metacomputation}}, \bibinfo{publisher}{University of Pereslavl
+  Publishing House}, \bibinfo{address}{Pereslavl-Zalessky, Russia}, pp.
+  \bibinfo{pages}{177--193}.
+
+\bibitemdeclare{article}{Lisitsa2017}
+\bibitem{Lisitsa2017}
+\bibinfo{author}{Alexei~P. \surnamestart Lisitsa\surnameend} \&
+  \bibinfo{author}{Andrei~P. \surnamestart Nemytykh\surnameend}
+  (\bibinfo{year}{2017}): \emph{\bibinfo{title}{Verification of Programs via
+  Intermediate Interpretation}}.
+\newblock {\sl \bibinfo{journal}{Electronic Proceedings in Theoretical Computer
+  Science}} \bibinfo{volume}{253}, p. \bibinfo{pages}{54–74},
+  \doi{10.4204/eptcs.253.6}.
+\newblock \urlprefix\url{http://dx.doi.org/10.4204/EPTCS.253.6}.
+
+\bibitemdeclare{techreport}{MendelGleasonPhD2011}
+\bibitem{MendelGleasonPhD2011}
+\bibinfo{author}{Gavin \surnamestart Mendel-Gleason\surnameend}
+  (\bibinfo{year}{2011}): \emph{\bibinfo{title}{Types and Verification for
+  Infinite State Systems}}.
+\newblock \bibinfo{type}{{PhD thesis}}, \bibinfo{institution}{Dublin City
+  University}, \bibinfo{address}{Dublin, Ireland}.
+
+\bibitemdeclare{mastersthesis}{Sorensen1994TurchinSupercompiler}
+\bibitem{Sorensen1994TurchinSupercompiler}
+\bibinfo{author}{M.~H. \surnamestart S{\o}rensen\surnameend}
+  (\bibinfo{year}{1994}): \emph{\bibinfo{title}{Turchin{'}s Supercompiler
+  Revisited: an Operational Theory of Positive Information Propagation}}.
+\newblock Master's thesis, \bibinfo{school}{K{\o}benhavns Universitet,
+  Datalogisk Institut}.
+
+\bibitemdeclare{inproceedings}{sorm98b}
+\bibitem{sorm98b}
+\bibinfo{author}{Morten~Heine \surnamestart S{\o}rensen\surnameend} \&
+  \bibinfo{author}{Robert \surnamestart Gl\"uck\surnameend}
+  (\bibinfo{year}{1999}): \emph{\bibinfo{title}{Introduction to
+  Supercompilation}}.
+\newblock In \bibinfo{editor}{John \surnamestart Hatcliff\surnameend},
+  \bibinfo{editor}{Torben \surnamestart Mogensen\surnameend} \&
+  \bibinfo{editor}{Peter \surnamestart Thiemann\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{Partial Evaluation: Practice and Theory}}, {\sl
+  \bibinfo{series}{Lecture Notes in Computer Science}} \bibinfo{volume}{1706},
+  \bibinfo{publisher}{Springer-Verlag}, pp. \bibinfo{pages}{246--270}.
+
+\bibitemdeclare{article}{TurchinSupercompilerConcept}
+\bibitem{TurchinSupercompilerConcept}
+\bibinfo{author}{Valentin~F. \surnamestart Turchin\surnameend}
+  (\bibinfo{year}{1986}): \emph{\bibinfo{title}{The Concept of a
+  Supercompiler}}.
+\newblock {\sl \bibinfo{journal}{ACM Trans. Program. Lang. Syst.}}
+  \bibinfo{volume}{8}(\bibinfo{number}{3}), p. \bibinfo{pages}{292–325},
+  \doi{10.1145/5956.5957}.
+\newblock \urlprefix\url{https://doi.org/10.1145/5956.5957}.
+
+\end{thebibliography}
