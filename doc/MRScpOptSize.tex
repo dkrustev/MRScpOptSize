@@ -45,7 +45,7 @@
 \ifVptVer
 \title{Optimizing Program Size Using Multi-result Supercompilation}
 \else
-\title{Controlling Size Of Supercompiled Programs Using Multi-result Supercompilation}
+\title{Controlling The Size Of Supercompiled Programs Using Multi-result Supercompilation}
 \date{\vspace{-4ex}}
 \fi
 
@@ -203,8 +203,8 @@ complete set of configuration graphs produced by multi-result supercompilation.
     plus the renaming (finite mapping of variables to variables), which makes the folded configurations compatible.
     Note that, following Grechanik et al. \cite{Romanenko2014StagedMRSC}, we consider
     only folding to a node on the path from the current node to the root of the graph.
-    This choice enables us to keep more simple the representation of the
-    set of configuration graphs we produce.
+    This choice enables us to keep the representation of the
+    set of configuration graphs we produce simpler.
     Also, similar to other positive supercompilers \cite{Sorensen1994TurchinSupercompiler,sorm98b,TMR/SCP2014},
     it is only possible to fold to a node, which is a renaming of the current one.
   \item Node \verb|GSBuild| is the most complicated one, representing a list
@@ -333,7 +333,7 @@ current configuration -- based on 2 language-specific functions:
 \begin{itemize}
   \item \verb|multiDriveSteps| returns a number of alternatives for the current configuration --
     either a set of new configurations produced by a single step of driving, 
-    or (possibly several different forms of) generalization.
+    or by (possibly several different forms of) generalization.
   \item \verb|mdsrSubExps| returns -- for a given alternative produced by the previous function --
     the list of sub-configurations (in our case -- subexpressions) that must be subjected
     to further analysis.
@@ -546,8 +546,8 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     multiple times in the body of the definition. 
     We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work.}: \\
     $\mathtt{mrdrive} \llbracket f(e_1, \ldots, e_n) \rrbracket =$ 
-      $[\mathtt{MDSRLet}(y_1=e_1, \ldots, y_n=e_n, e [ x_1\rightarrow y_1,$ \ldots$, x_n\rightarrow y_n ]); $ \\
-      $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1, \ldots, x_n\rightarrow e_n ])]$,
+      $[\mathtt{MDSRLet}(y_1=e_1,$ \ldots$, y_n=e_n, e [ x_1\rightarrow y_1,$ \ldots$, x_n\rightarrow y_n ]); $ 
+      $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1,$ \ldots$, x_n\rightarrow e_n ])]$,
     where $y_1, \ldots, y_n$ are fresh and $f(x_1, \ldots, x_n) = e \in P$.
     Notice that we shall always place the generalization result before the driving result in the list.
     In this way, when we expand the lazy graph using \verb|gset2graphs|, configuration graphs
@@ -563,7 +563,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     The code potentially being duplicated, however, is always of the form $C(x_1, \ldots, x_n)$.
     We have currently decided to accept this limited form of potential duplication, without adding a generalization: \\
     $\mathtt{mrdrive} \llbracket g(x, e_1, \ldots, e_n) \rrbracket =$
-    $[$ $\mathtt{MDSRCases}$ $(x,$ $\mathtt{propagate}$ $(x, p_1, (e_1,$ \ldots$, e_n), e'_1),$ \ldots$,$ 
+    $[$ $\mathtt{MDSRCases}$ $(x,$ $\mathtt{propagate}$ $(x, p_1, (e_1,$ \ldots$, e_n),$ $e'_1),$ \ldots$,$ 
     $\mathtt{propagate}$ $(x, p_m, (e_1,$ \ldots$, e_n), e'_m))]$
     where $g(p_1, y_1,$ \ldots$, y_n) = e'_1,$ \ldots$, g(p_m, y_1,$ \ldots$, y_n) = e'_m \in P$;
   \item The case of matching on a function call is perhaps the least obvious. 
@@ -571,9 +571,9 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     it will be.
     So we prefer to be conservative, and add a full generalization of the outer call here: \\
     $\mathtt{mrdrive} \llbracket g(f(e'_1, \ldots, e'_m), e_1, \ldots, e_n) \rrbracket =$
-    $[\mathtt{MDSRLet}$ $(x_0=f(e'_1,$ \ldots$, e'_m), x_1=e_1,$ \ldots$, x_n=e_n,$ 
+    $[\mathtt{MDSRLet}$ $(x_0=f(e'_1,$ \ldots$, e'_m),$ $x_1=e_1,$ \ldots$, x_n=e_n,$ 
     $g(x_0,$ \ldots$, x_n));$ 
-    $\mathtt{mdsrMap}(\llbracket g(\bullet, e_1,$ \ldots$, e_n) \rrbracket, \mathtt{mrdrive} \llbracket f(e'_1,$ \ldots$, e'_m) \rrbracket)]$
+    $\mathtt{mdsrMap}(\llbracket g(\bullet, e_1,$ \ldots$, e_n) \rrbracket,$ $\mathtt{mrdrive} \llbracket f(e'_1,$ \ldots$, e'_m) \rrbracket)]$
     where $x_0, \ldots, x_n$ are, as usual, fresh.
 \end{itemize}
 
@@ -701,7 +701,7 @@ programs, for a couple of reasons:
     during residualization.
     The latter are standard optimizations that can be performed on any program, no matter if it is produced
     by supercompilation or written by hand.
-  \item As already mentioned, we can efficiently to extract a configuration graph of optimum size from the lazy graph.
+  \item As already mentioned, we can efficiently extract a configuration graph of optimum size from the lazy graph.
     We have no way to do the same with respect to the size of the residual program.
 \end{itemize}
 
@@ -788,9 +788,9 @@ g(Cons(A, Cons(A, Cons(A, Nil))), z)
 
 Here we analyze in detail several of the example programs (Fig. \ref{fig:Examples}) showing the most interesting results.
 \ifVptVer
-The extended version of this article \cite{krustev2020MrscOptSizeReport} discusses the remaining few examples as well.
+The extended version of this article \cite{krustev2020MrscOptSizeReport} discusses a few additional examples as well.
 \else
-The remaining few examples are shown in Appendix \ref{app:MoreExapmles}.
+A few additional examples are shown in Appendix \ref{app:MoreExapmles}.
 \fi
 \begin{itemize}
   \item ``double append'' (Fig. \ref{sfig:AppPrg}-\subref{sfig:DoubleApp}) is traditionally used to 
