@@ -129,6 +129,13 @@
   \bibinfo{booktitle}{Proceedings of the Third International Workshop on
   Metacomputation (META 2012)}}, pp. \bibinfo{pages}{142--164}.
 
+\bibitemdeclare{misc}{krustev2020controlling}
+\bibitem{krustev2020controlling}
+\bibinfo{author}{Dimitur \surnamestart Krustev\surnameend}
+  (\bibinfo{year}{2020}): \emph{\bibinfo{title}{Controlling the Size of
+  Supercompiled Programs using Multi-result Supercompilation}}.
+\newblock \urlprefix\url{https://arxiv.org/abs/2006.02204}.
+
 \bibitemdeclare{inproceedings}{krustev2014approach}
 \bibitem{krustev2014approach}
 \bibinfo{author}{Dimitur~Nikolaev \surnamestart Krustev\surnameend}

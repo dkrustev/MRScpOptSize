@@ -1,6 +1,6 @@
 \PassOptionsToPackage{hyphens}{url}
 \newif\ifVptVer
-%\VptVertrue
+\VptVertrue
 
 \ifVptVer
   \documentclass[submission,copyright,creativecommons]{eptcs}
@@ -277,7 +277,7 @@ the graph node of each alternative configuration.
 %\label{fig:MRSCAlg}
 %\end{figure}
 
-\begin{algorithm}[h]
+\begin{algorithm}[ht]
   \caption{Main MRSC Algorithm}
   \label{alg:MRSCAlg}
   \begin{algorithmic}[1]
@@ -547,7 +547,7 @@ let mdsrSubExps (mdsr: MultiDriveStepResult) : list<Exp> =
     We conservatively generalize all arguments of the call\footnote{We leave a more refined generalization treatment for future work.}: \\
     $\mathtt{mrdrive} \llbracket f(e_1, \ldots, e_n) \rrbracket =$ 
       $[\mathtt{MDSRLet}(y_1=e_1,$ \ldots$, y_n=e_n, e [ x_1\rightarrow y_1,$ \ldots$, x_n\rightarrow y_n ]); $ 
-      $\mathtt{MDSRUnfold}(e [ x_1\rightarrow e_1,$ \ldots$, x_n\rightarrow e_n ])]$,
+      $\mathtt{MDSRUnfold}($ $e [ x_1\rightarrow e_1,$ \ldots$, x_n\rightarrow e_n ])]$,
     where $y_1, \ldots, y_n$ are fresh and $f(x_1, \ldots, x_n) = e \in P$.
     Notice that we shall always place the generalization result before the driving result in the list.
     In this way, when we expand the lazy graph using \verb|gset2graphs|, configuration graphs
@@ -614,7 +614,7 @@ A part of the resulting lazy graph (omitting subgraphs for alternatives other th
 is shown in Fig. \ref{fig:ExpGrowthSmallPartialGraphSet}.
 The full lazy graph for the same example is shown in 
 \ifVptVer
-the extended version of this article \cite{krustev2020MrscOptSizeReport}.
+the extended version of this article \cite{krustev2020controlling}.
 \else
 Appendix \ref{app:ExpGrowthSmallGraphSet}.
 \fi
@@ -659,13 +659,14 @@ In particular, we have implemented functions to extract:
   \item the graph with the smallest number of nodes;
   \item the graph with the largest number of nodes.
 \end{itemize}
-The implementation of the last 2 functions is shown in
 \ifVptVer
-the extended version of this article \cite{krustev2020MrscOptSizeReport},
+The implementation of some of these functions is shown in
+the extended version of this article \cite{krustev2020controlling}.
 \else
+The implementation of the last 2 functions is shown in
 Appendix \ref{app:FilterGraphSet},
-\fi
 the other 2 are similar.
+\fi
 These implementations take polynomial time (and often almost linear time in practice)  
 with respect to the size of the lazy graph,
 while the number of configuration graphs can be exponential with respect to this size.
@@ -788,7 +789,7 @@ g(Cons(A, Cons(A, Cons(A, Nil))), z)
 
 Here we analyze in detail several of the example programs (Fig. \ref{fig:Examples}) showing the most interesting results.
 \ifVptVer
-The extended version of this article \cite{krustev2020MrscOptSizeReport} discusses a few additional examples as well.
+The extended version of this article \cite{krustev2020controlling} discusses a few additional examples as well.
 \else
 A few additional examples are shown in Appendix \ref{app:MoreExapmles}.
 \fi
