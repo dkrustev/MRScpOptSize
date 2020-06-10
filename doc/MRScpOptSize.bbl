@@ -45,7 +45,6 @@
   \bibinfo{series}{PEPM ’07}, \bibinfo{publisher}{Association for Computing
   Machinery}, \bibinfo{address}{New York, NY, USA}, p.
   \bibinfo{pages}{61–70}, \doi{10.1145/1244381.1244391}.
-\newblock \urlprefix\url{https://doi.org/10.1145/1244381.1244391}.
 
 \bibitemdeclare{book}{Jones:1993:PEA:153676}
 \bibitem{Jones:1993:PEA:153676}
@@ -68,7 +67,6 @@
   \bibinfo{series}{PEPM ’11}, \bibinfo{publisher}{Association for Computing
   Machinery}, \bibinfo{address}{New York, NY, USA}, p.
   \bibinfo{pages}{33–42}, \doi{10.1145/1929501.1929507}.
-\newblock \urlprefix\url{https://doi.org/10.1145/1929501.1929507}.
 
 \bibitemdeclare{article}{TMR/SCP2014}
 \bibitem{TMR/SCP2014}
@@ -92,7 +90,6 @@
   2009. Revised Papers}}, \bibinfo{publisher}{Springer Berlin Heidelberg},
   \bibinfo{address}{Berlin, Heidelberg}, pp. \bibinfo{pages}{193--205},
   \doi{10.1007/978-3-642-11486-1_17}.
-\newblock \urlprefix\url{http://dx.doi.org/10.1007/978-3-642-11486-1_17}.
 
 \bibitemdeclare{inproceedings}{KlyuchnikovMRSCBranch}
 \bibitem{KlyuchnikovMRSCBranch}
@@ -157,7 +154,6 @@
 \newblock {\sl \bibinfo{journal}{Electronic Proceedings in Theoretical Computer
   Science}} \bibinfo{volume}{253}, p. \bibinfo{pages}{54–74},
   \doi{10.4204/eptcs.253.6}.
-\newblock \urlprefix\url{http://dx.doi.org/10.4204/EPTCS.253.6}.
 
 \bibitemdeclare{techreport}{MendelGleasonPhD2011}
 \bibitem{MendelGleasonPhD2011}
@@ -186,7 +182,8 @@
   \bibinfo{editor}{Peter \surnamestart Thiemann\surnameend}, editors: {\sl
   \bibinfo{booktitle}{Partial Evaluation: Practice and Theory}}, {\sl
   \bibinfo{series}{Lecture Notes in Computer Science}} \bibinfo{volume}{1706},
-  \bibinfo{publisher}{Springer-Verlag}, pp. \bibinfo{pages}{246--270}.
+  \bibinfo{publisher}{Springer-Verlag}, pp. \bibinfo{pages}{246--270},
+  \doi{10.1007/3-540-47018-2_10}.
 
 \bibitemdeclare{article}{TurchinSupercompilerConcept}
 \bibitem{TurchinSupercompilerConcept}
@@ -196,6 +193,5 @@
 \newblock {\sl \bibinfo{journal}{ACM Trans. Program. Lang. Syst.}}
   \bibinfo{volume}{8}(\bibinfo{number}{3}), p. \bibinfo{pages}{292–325},
   \doi{10.1145/5956.5957}.
-\newblock \urlprefix\url{https://doi.org/10.1145/5956.5957}.
 
 \end{thebibliography}
