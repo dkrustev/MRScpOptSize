@@ -871,13 +871,13 @@ Several interesting observations arise from analyzing the selected resulting pro
     Another possibility is to find not only (one of) the minimum-size result(s), but the $N$ smallest
     results ($N$ being an input parameter).
 \end{itemize}
-Based on the last observation, we have implemented modified queries for finding the graph of minimum (and maximum) size, where
+Based on the last observation above, we have implemented modified queries for finding the graph of minimum (and maximum) size, where
 unfolding nodes are not counted -- with very encouraging results:
 \begin{itemize}
   \item for ``double append'', ``KMP test'', and ``\verb|eqBool| symmetry'' the modified query returns
     the same optimal programs discussed above, which were also found by the existing queries for 
     minimum or last program;
-  \item for ``exp growth'' the modified-minimum query finds again the optimal program -- shown Fig. \ref{fig:ExpGrowthOptResult}
+  \item for ``exp growth'', the modified-minimum query again finds the optimal program -- shown Fig. \ref{fig:ExpGrowthOptResult}
     -- which was missed by all standard queries.
 \end{itemize}
 
@@ -965,10 +965,10 @@ lead to improvements in result size, while still producing faster programs.
 The key idea is to roll back -- discarding some work done by the supercompiler -- if the heuristics
 indicate that this work is not leading to a useful result (a form of generalization).
 Speculative execution can also help with code size in some instances.
-One problem with this approach is that is not clear how to generalize it or
+One problem with this approach is that it is not clear how to generalize it or
 apply it to a completely different supercompiler.
-The main advantage is that by carefully selecting heuristics suitable for the specific
-supercompiler, the authors report good results on a number of representative benchmarks.
+The main advantage is that by carefully selecting heuristics, suitable for the specific
+supercompiler, the authors report good results on a number of benchmarks.
 
 Jonsson et al. \cite{Jonsson2011Taming} explicitly address both the issue of code explosion and
 the related issue of supercompilation time.
@@ -987,16 +987,16 @@ The authors have instantiated the framework on a language simulating counter sys
 is not Turing-complete, and thus does not demonstrate some of the complications
 coming with Turing-complete object languages.
 The work of Grechanik et al. \cite{Romanenko2014StagedMRSC} is most closely related to ours: 
-we re-use the same ideas for implementing
-our multi-result supercompiler, and for efficiently filtering its results by criteria.
+we re-use the ideas for implementing
+our multi-result supercompiler and for efficiently filtering its results by criteria.
 Our main emphasis, however, is on using MRSC together with a generalization strategy, which
-is explicitly tailored towards avoiding code duplication, and hence, optimizing result size.
+is explicitly tailored towards avoiding code duplication and -- consequently -- optimizing result size.
 We pay much less attention to supercompilation time, as long as it is not unacceptably big
 even for the small examples we want to analyze.
 
 \section{Conclusions and Future Work}
 
-We have presented a study of the feasibility to control result size after supercompilation
+We have presented a study on the feasibility of controlling result size after supercompilation
 -- based on using multi-result supercompilation coupled with a specific generalization
 strategy avoiding code duplication.
 While the idea of multi-result supercompilation is not new, the idea to use it -- combined
@@ -1006,9 +1006,9 @@ The current results of the approach -- based on a small set of typical supercomp
 are encouraging:
 \begin{itemize}
   \item the smallest configuration graphs we produce do not show exponential growth with respect 
-    to the size of the input, and typically are much smaller than the largest results;
+    to the size of the input and typically are much smaller than the largest results;
   \item often the results of small size (though not necessarily the smallest) also feature a
-    significant amount of optimizations, comparable to what a standard classical supercompiler
+    significant number of optimizations, comparable to what a standard classical supercompiler
     can achieve on the same task.
 \end{itemize}
 
@@ -1023,9 +1023,9 @@ We have already hinted at some areas for potential improvements of the proposed 
 \end{itemize}
 Clearly the first thing to do, however, is to test the proposed approach on a larger set of
 different examples.
-The current list of analyzed examples is so small, that we consider the current proposal
-to be work in progress.
-Such an extended set of tests could give more insight on the strengths and weaknesses of the 
+Due to the small number of analyzed examples, we consider the current proposal to be work in
+progress.
+An extended set of tests could give more insight on the strengths and weaknesses of the 
 proposed technique, and would likely lead to ideas for further study.
 
 Provided we obtain mostly encouraging results from further testing, the next logical 
