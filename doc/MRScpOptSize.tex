@@ -1,16 +1,19 @@
-\PassOptionsToPackage{hyphens}{url}
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{VPT 2020} % Name of the event you are submitting to
+
+%\PassOptionsToPackage{hyphens}{url}
 \newif\ifVptVer
 \VptVertrue
-
-\ifVptVer
-  \documentclass[submission,copyright,creativecommons]{eptcs}
-  \providecommand{\event}{VPT 2020} % Name of the event you are submitting to
-\else
-  %\documentclass[copyright,creativecommons]{eptcs}
-  %\providecommand{\publicationstatus}{} % do not show publication status
-  \documentclass[10pt,a4paper]{article}
-  \usepackage{hyperref}
-\fi
+%
+%\ifVptVer
+%  \documentclass[submission,copyright,creativecommons]{eptcs}
+%  \providecommand{\event}{VPT 2020} % Name of the event you are submitting to
+%\else
+%  %\documentclass[copyright,creativecommons]{eptcs}
+%  %\providecommand{\publicationstatus}{} % do not show publication status
+%  \documentclass[10pt,a4paper]{article}
+%  \usepackage{hyperref}
+%\fi
 
 \usepackage{breakurl}             % Not needed if you use pdflatex only.
 \usepackage{underscore}           % Only needed if you use pdflatex.
