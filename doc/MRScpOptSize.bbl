@@ -42,9 +42,9 @@
   Essence of Programs}}.
 \newblock In: {\sl \bibinfo{booktitle}{Proceedings of the 2007 ACM SIGPLAN
   Symposium on Partial Evaluation and Semantics-Based Program Manipulation}},
-  \bibinfo{series}{PEPM ’07}, \bibinfo{publisher}{Association for Computing
-  Machinery}, \bibinfo{address}{New York, NY, USA}, p.
-  \bibinfo{pages}{61–70}, \doi{10.1145/1244381.1244391}.
+  \bibinfo{series}{PEPM '07}, \bibinfo{publisher}{Association for Computing
+  Machinery}, \bibinfo{address}{New York, NY, USA}, pp.
+  \bibinfo{pages}{61--70}, \doi{10.1145/1244381.1244391}.
 
 \bibitemdeclare{book}{Jones:1993:PEA:153676}
 \bibitem{Jones:1993:PEA:153676}
@@ -64,9 +64,9 @@
   Supercompilation}}.
 \newblock In: {\sl \bibinfo{booktitle}{Proceedings of the 20th ACM SIGPLAN
   Workshop on Partial Evaluation and Program Manipulation}},
-  \bibinfo{series}{PEPM ’11}, \bibinfo{publisher}{Association for Computing
-  Machinery}, \bibinfo{address}{New York, NY, USA}, p.
-  \bibinfo{pages}{33–42}, \doi{10.1145/1929501.1929507}.
+  \bibinfo{series}{PEPM '11}, \bibinfo{publisher}{Association for Computing
+  Machinery}, \bibinfo{address}{New York, NY, USA}, pp.
+  \bibinfo{pages}{33--42}, \doi{10.1145/1929501.1929507}.
 
 \bibitemdeclare{article}{TMR/SCP2014}
 \bibitem{TMR/SCP2014}
@@ -152,7 +152,7 @@
   (\bibinfo{year}{2017}): \emph{\bibinfo{title}{Verification of Programs via
   Intermediate Interpretation}}.
 \newblock {\sl \bibinfo{journal}{Electronic Proceedings in Theoretical Computer
-  Science}} \bibinfo{volume}{253}, p. \bibinfo{pages}{54–74},
+  Science}} \bibinfo{volume}{253}, pp. \bibinfo{pages}{54--74},
   \doi{10.4204/eptcs.253.6}.
 
 \bibitemdeclare{techreport}{MendelGleasonPhD2011}
@@ -191,7 +191,7 @@
   (\bibinfo{year}{1986}): \emph{\bibinfo{title}{The Concept of a
   Supercompiler}}.
 \newblock {\sl \bibinfo{journal}{ACM Trans. Program. Lang. Syst.}}
-  \bibinfo{volume}{8}(\bibinfo{number}{3}), p. \bibinfo{pages}{292–325},
+  \bibinfo{volume}{8}(\bibinfo{number}{3}), pp. \bibinfo{pages}{292--325},
   \doi{10.1145/5956.5957}.
 
 \end{thebibliography}
